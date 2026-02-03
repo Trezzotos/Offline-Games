@@ -50,25 +50,37 @@ class OfflineGames:
         self.window.blit(title_img, title_pos)
 
     def refresh_ui(self):
-        """Aggiorna l'intero contenuto della finestra."""
+        """Aggiorna l'intero contenuto della finestra con il fix del testo centrato."""
         self.window.fill(THEME["background"])
         self._render_frame()
 
         for idx, item in enumerate(self.catalog):
             is_active = (idx == self.pointer)
             label_color = THEME["selection"] if is_active else THEME["text_main"]
-            prefix = "▶ " if is_active else "  "
             
-            # Rendering testo opzione
-            content = self.font_button.render(f"{prefix}{item['label']}", True, label_color)
-            content_rect = content.get_rect(center=(SCREEN_SIZE[0] // 2, 350 + idx * 110))
+            # 1. Renderizziamo solo il testo del gioco (es. "SUDOKU")
+            # In questo modo il centro del testo è il centro dello schermo
+            label_surf = self.font_button.render(item['label'], True, label_color)
+            label_rect = label_surf.get_rect(center=(SCREEN_SIZE[0] // 2, 350 + idx * 110))
 
-            # Background evidenziatore per l'elemento attivo
             if is_active:
-                glow_rect = content_rect.inflate(50, 25)
+                # 2. Creiamo il rettangolo di evidenziazione basato solo sul testo
+                glow_rect = label_rect.inflate(50, 25)
                 pygame.draw.rect(self.window, (40, 45, 60), glow_rect, border_radius=15)
+                
+                # 3. Disegniamo le frecce esternamente al rettangolo "glow"
+                arrow_l = self.font_button.render("> ", True, THEME["selection"])
+                arrow_r = self.font_button.render(" <", True, THEME["selection"])
+                
+                # Posizioniamo le frecce a sinistra e destra del rettangolo grigio
+                l_pos = arrow_l.get_rect(midright=(glow_rect.left - 15, glow_rect.centery))
+                r_pos = arrow_r.get_rect(midleft=(glow_rect.right + 15, glow_rect.centery))
+                
+                self.window.blit(arrow_l, l_pos)
+                self.window.blit(arrow_r, r_pos)
             
-            self.window.blit(content, content_rect)
+            # 4. Infine scriviamo il testo (rimarrà sempre perfettamente al centro)
+            self.window.blit(label_surf, label_rect)
 
         # Footer informativo
         hint = self.font_help.render("Naviga con ↑↓ • Conferma con INVIO", True, THEME["footer"])
@@ -110,7 +122,7 @@ class OfflineGames:
                         self.shutdown()
 
             self.refresh_ui()
-            clock.tick(60) # Limita il framerate per risparmiare CPU
+            clock.tick(60)
 
 if __name__ == "__main__":
     app = OfflineGames()
