@@ -1,117 +1,117 @@
 import pygame
-from pygame.locals import *
 import sys
 import subprocess
+import os
+from pygame.locals import *
 
-# ----------------------------
-# Costanti grafiche (Colori più sobri ed eleganti)
-# ----------------------------
-WINDOW_WIDTH, WINDOW_HEIGHT = 700, 700
-BG_COLOR = (30, 35, 45)       # Blu notte scuro
-PRIMARY_COLOR = (240, 240, 240)  # Bianco avorio
-ACCENT_COLOR = (0, 200, 255)     # Azzurro brillante
-HIGHLIGHT_COLOR = (255, 170, 0)  # Arancio (per la selezione)
-DARK_GRAY = (20, 20, 20)
+# --- CONFIGURAZIONE ESTETICA ---
+SCREEN_SIZE = (700, 700)
+THEME = {
+    "background": (25, 25, 35),
+    "panel": (15, 15, 20),
+    "text_main": (235, 235, 235),
+    "accent": (0, 180, 255),
+    "selection": (255, 160, 0),
+    "footer": (120, 120, 130)
+}
 
-class OfflineGamesMenu:
+class OfflineGames:
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("OFFLINE GAMES HUB")
-        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        self.clock = pygame.time.Clock()
-
-        # Font (Utilizzo font di sistema standard per pulizia, o caricali se li hai)
-        self.title_font = pygame.font.SysFont("Verdana", 50, bold=True)
-        self.menu_font = pygame.font.SysFont("Verdana", 30, bold=True)
-        self.info_font = pygame.font.SysFont("Verdana", 18)
-
-        # Nuove Opzioni
-        self.options = ["SUDOKU", "BATTAGLIA NAVALE"]
-        self.selected = 0
-
-    # ------------------------
-    # Interfaccia grafica moderna
-    # ------------------------
-    def draw_interface(self):
-        s = self.screen
-        w, h = WINDOW_WIDTH, WINDOW_HEIGHT
-
-        # Sfondo con sfumatura semplice (rettangolo decorativo)
-        pygame.draw.rect(s, DARK_GRAY, (50, 50, w-100, h-100), border_radius=20)
+        self.window = pygame.display.set_mode(SCREEN_SIZE)
+        pygame.display.set_caption("MULTIGAME DASHBOARD")
         
-        # Titolo "Offline Games"
-        title_surf = self.title_font.render("Offline Games", True, PRIMARY_COLOR)
-        title_rect = title_surf.get_rect(center=(w // 2, 150))
+        # Inizializzazione Font
+        self.font_header = pygame.font.SysFont("Segoe UI", 55, bold=True)
+        self.font_button = pygame.font.SysFont("Segoe UI", 32, bold=True)
+        self.font_help = pygame.font.SysFont("Segoe UI", 18, italic=True)
+
+        # Mappatura Giochi: Nome visualizzato -> Nome File
+        self.catalog = [
+            {"label": "SUDOKU", "file": "Sudoku.py"},
+            {"label": "BATTAGLIA NAVALE", "file": "BattagliaNavale.py"}
+        ]
+        self.pointer = 0
+
+    def _render_frame(self):
+        # Pannello centrale decorativo
+        margin = 60
+        rect_width = SCREEN_SIZE[0] - (margin * 2)
+        rect_height = SCREEN_SIZE[1] - (margin * 2)
+        pygame.draw.rect(self.window, THEME["panel"], (margin, margin, rect_width, rect_height), border_radius=30)
         
-        # Linea decorativa sotto il titolo
-        pygame.draw.line(s, ACCENT_COLOR, (200, 190), (500, 190), 4)
-        s.blit(title_surf, title_rect)
+        # Header
+        title_img = self.font_header.render("Offline Games Menu", True, THEME["text_main"])
+        title_pos = title_img.get_rect(center=(SCREEN_SIZE[0] // 2, 160))
+        
+        # Sottolineatura stilizzata
+        line_y = 200
+        pygame.draw.line(self.window, THEME["accent"], (250, line_y), (450, line_y), 3)
+        self.window.blit(title_img, title_pos)
 
-    # ------------------------
-    # Disegna il menu
-    # ------------------------
-    def draw_menu(self):
-        self.screen.fill(BG_COLOR)
-        self.draw_interface()
+    def refresh_ui(self):
+        """Aggiorna l'intero contenuto della finestra."""
+        self.window.fill(THEME["background"])
+        self._render_frame()
 
-        for i, option in enumerate(self.options):
-            # Cambia colore e aggiunge un indicatore se selezionato
-            if i == self.selected:
-                color = HIGHLIGHT_COLOR
-                prefix = "> "
-            else:
-                color = PRIMARY_COLOR
-                prefix = "  "
+        for idx, item in enumerate(self.catalog):
+            is_active = (idx == self.pointer)
+            label_color = THEME["selection"] if is_active else THEME["text_main"]
+            prefix = "▶ " if is_active else "  "
             
-            text = self.menu_font.render(f"{prefix}{option}", True, color)
-            rect = text.get_rect(center=(WINDOW_WIDTH // 2, 320 + i * 100))
-            
-            # Effetto hover (opzionale: rettangolo dietro la selezione)
-            if i == self.selected:
-                bg_rect = rect.inflate(40, 20)
-                pygame.draw.rect(self.screen, (50, 50, 60), bg_rect, border_radius=10)
-            
-            self.screen.blit(text, rect)
+            # Rendering testo opzione
+            content = self.font_button.render(f"{prefix}{item['label']}", True, label_color)
+            content_rect = content.get_rect(center=(SCREEN_SIZE[0] // 2, 350 + idx * 110))
 
-        # Istruzioni in basso
-        info = self.info_font.render(
-            "Usa le frecce per scegliere • INVIO per giocare", True, (150, 150, 150)
-        )
-        self.screen.blit(info, info.get_rect(center=(WINDOW_WIDTH // 2, 600)))
+            # Background evidenziatore per l'elemento attivo
+            if is_active:
+                glow_rect = content_rect.inflate(50, 25)
+                pygame.draw.rect(self.window, (40, 45, 60), glow_rect, border_radius=15)
+            
+            self.window.blit(content, content_rect)
+
+        # Footer informativo
+        hint = self.font_help.render("Naviga con ↑↓ • Conferma con INVIO", True, THEME["footer"])
+        self.window.blit(hint, hint.get_rect(center=(SCREEN_SIZE[0] // 2, 620)))
 
         pygame.display.flip()
 
-    def launch_game(self):
-        # Assicurati che i nomi dei file siano corretti
-        if self.selected == 0:
-            # Lancia Sudoku
-            subprocess.Popen([sys.executable, "Sudoku.py"])
-        elif self.selected == 1:
-            # Lancia Battaglia Navale
-            subprocess.Popen([sys.executable, "BattagliaNavale.py"])
-        
+    def boot_selected_game(self):
+        """Esegue il file associato alla selezione attuale."""
+        target_script = self.catalog[self.pointer]["file"]
+        try:
+            subprocess.Popen([sys.executable, target_script])
+            self.shutdown()
+        except Exception as e:
+            print(f"Errore nell'avvio di {target_script}: {e}")
+
+    def shutdown(self):
+        """Chiusura pulita dell'applicazione."""
         pygame.quit()
         sys.exit()
 
-    def run(self):
-        running = True
-        while running:
+    def start_engine(self):
+        """Ciclo principale dell'applicazione."""
+        clock = pygame.time.Clock()
+        
+        while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    running = False
-                elif event.type == KEYDOWN:
+                    self.shutdown()
+                
+                if event.type == KEYDOWN:
                     if event.key == K_UP:
-                        self.selected = (self.selected - 1) % len(self.options)
+                        self.pointer = (self.pointer - 1) % len(self.catalog)
                     elif event.key == K_DOWN:
-                        self.selected = (self.selected + 1) % len(self.options)
+                        self.pointer = (self.pointer + 1) % len(self.catalog)
                     elif event.key == K_RETURN:
-                        self.launch_game()
+                        self.boot_selected_game()
+                    elif event.key == K_ESCAPE:
+                        self.shutdown()
 
-            self.draw_menu()
-            self.clock.tick(30)
-
-        pygame.quit()
-        sys.exit()
+            self.refresh_ui()
+            clock.tick(60) # Limita il framerate per risparmiare CPU
 
 if __name__ == "__main__":
-    OfflineGamesMenu().run()
+    app = OfflineGames()
+    app.start_engine()
