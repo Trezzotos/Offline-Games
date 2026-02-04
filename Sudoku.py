@@ -19,7 +19,7 @@ THEME = {
     "panel": (40, 45, 60)
 }
 
-WIDTH, HEIGHT = 600, 780 # Aumentata altezza per il footer centrale
+WIDTH, HEIGHT = 600, 780 
 GRID_SIZE = 9
 CELL_SIZE = WIDTH // GRID_SIZE
 
@@ -138,17 +138,12 @@ class SudokuGame:
                         ny = r * CELL_SIZE + (idx // 3) * (CELL_SIZE // 3) + 4
                         self.screen.blit(self.font_note.render(str(n), True, THEME["note"]), (nx, ny))
 
-        # --- FOOTER CENTRALE (STRUMENTO ANNOTAZIONE) ---
+        # --- FOOTER CENTRALE ---
         footer_y = WIDTH + 55
         note_label = "[A] ANNOTAZIONE: "
         status_str = "ATTIVA" if self.note_mode else "DISATTIVATA"
         status_color = THEME["note"] if self.note_mode else (120, 120, 120)
         
-        # Rendering combinato centrato
-        full_footer = self.font_small.render(note_label + status_str, True, THEME["text"])
-        footer_rect = full_footer.get_rect(center=(WIDTH//2, footer_y))
-        
-        # Sovrascrivo solo la parte dello stato per il colore dinamico
         label_surf = self.font_small.render(note_label, True, THEME["text"])
         status_surf = self.font_small.render(status_str, True, status_color)
         
@@ -157,13 +152,11 @@ class SudokuGame:
         self.screen.blit(label_surf, (start_x, footer_y - 10))
         self.screen.blit(status_surf, (start_x + label_surf.get_width(), footer_y - 10))
 
-        # Messaggio Finale
         if self.won or self.game_over:
             end_msg = "VITTORIA! ESC per Menu" if self.won else "GAME OVER! ESC per Menu"
             end_img = self.font_small.render(end_msg, True, THEME["win"] if self.won else THEME["error"])
             self.screen.blit(end_img, end_img.get_rect(center=(WIDTH//2, footer_y + 25)))
 
-        # Selezione
         if not self.won and not self.game_over:
             sel_color = THEME["note"] if self.note_mode else THEME["select"]
             pygame.draw.rect(self.screen, sel_color, (self.selected[1]*CELL_SIZE, self.selected[0]*CELL_SIZE, CELL_SIZE, CELL_SIZE), 3)
@@ -171,6 +164,11 @@ class SudokuGame:
     def handle_input(self, val):
         r, c = self.selected
         if self.is_fixed[r, c]: return
+        
+        # --- FIX: Se il numero inserito è già quello nella cella, non fare nulla ---
+        if self.grid[r, c] == val:
+            return
+
         if self.note_mode:
             if val in self.notes[r][c]: self.notes[r][c].remove(val)
             else: self.notes[r][c].add(val)
