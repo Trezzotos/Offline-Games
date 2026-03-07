@@ -55,5 +55,6 @@ Il software è una raccolta di **giochi classici** sviluppati puramente in **Pyt
 
 Per offrire un'esperienza utente superiore e un'interfaccia grafica accattivante, il progetto utilizza:
 ```
-LIBRERIA GRAFICA: [[ INSERISCI QUI IL NOME DELLA LIBRERIA ]]
+Libreria Grafica di riferimento:  [pygame] 
+
 ```
