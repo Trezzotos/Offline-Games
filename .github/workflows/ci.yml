@@ -2,37 +2,46 @@ name: Python CI
 
 on:
   push:
-    branches:
-      - "**"
+    branches: [main]
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
   pull_request:
-    branches:
-      - main
+    branches: [main]
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
 
 jobs:
-  build:
+  lint-and-test:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pygame
+          # Installa tutto dal file dev che abbiamo creato
+          if [ -f requirements_dev.txt ]; then pip install -r requirements_dev.txt; fi
 
-      - name: Lint with flake8 (Optional)
+      - name: Lint with flake8
         run: |
-          pip install flake8
-          # si ferma se ci sono errori di sintassi Python
+          # Si ferma se ci sono errori di sintassi (E9, F63, F7, F82)
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Warning per la complessità del codice
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Check if script runs
-        run: |
-          # Questo comando verifica solo se ci sono errori di importazione 
-          # senza aprire la finestra (che fallirebbe su un server senza monitor)
-          python -m py_compile OfflineGamesMenu.py
+      - name: Check formatting with black
+        run: black --check --diff .
+
+      - name: Check imports with isort
+        run: isort --check-only --diff .
+
+      - name: Syntax Check (py_compile)
+        run: python -m py_compile MainMenu.py Sudoku.py
