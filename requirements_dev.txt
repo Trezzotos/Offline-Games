@@ -1,0 +1,10 @@
+# Dipendenze del Gioco
+pygame
+numpy
+
+# Strumenti di Sviluppo (Pipeline)
+pylint
+flake8
+mypy
+black
+isort
