@@ -56,7 +56,8 @@ ships_placed = 0
 enemy_ships_placed = False
 toggle = 1  # cambia la direzione della nave
 
-#commento
+
+# commento
 def place_ship(row, col, ship):
     dim_ship = player_ships[ship].dimension
     if toggle == 1:
