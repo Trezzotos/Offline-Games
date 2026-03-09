@@ -1,7 +1,8 @@
-import pygame
-import sys
-import subprocess
 import os
+import subprocess
+import sys
+
+import pygame
 from pygame.locals import *
 
 # --- CONFIGURAZIONE ESTETICA ---

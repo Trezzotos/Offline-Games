@@ -1,8 +1,9 @@
-import pygame
-import sys
-import numpy as np
 import random
 import subprocess
+import sys
+
+import numpy as np
+import pygame
 from pygame.locals import *
 
 # --- CONFIGURAZIONE ESTETICA ---
