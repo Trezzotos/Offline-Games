@@ -27,15 +27,23 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # Installa tutto dal file dev che abbiamo creato
           if [ -f requirements_dev.txt ]; then pip install -r requirements_dev.txt; fi
 
       - name: Lint with flake8
         run: |
-          # Si ferma se ci sono errori di sintassi (E9, F63, F7, F82)
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # Warning per la complessità del codice
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Lint with pylint
+        run: |
+          # Analizza tutti i file .py nel repository
+          pylint $(git ls-files '*.py')
+
+      - name: Static type checking with mypy
+        run: |
+          # Verifica la coerenza dei tipi (es. se passi una stringa dove serve un int)
+          # --ignore-missing-imports serve se alcune librerie non hanno i "type stubs"
+          mypy --ignore-missing-imports $(git ls-files '*.py')
 
       - name: Check formatting with black
         run: black --check --diff .
@@ -44,5 +52,4 @@ jobs:
         run: isort --check-only --diff .
 
       - name: Syntax Check (py_compile)
-
         run: python -m py_compile MainMenu.py Sudoku.py battleship.py
