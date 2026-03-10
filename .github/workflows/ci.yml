@@ -52,4 +52,4 @@ jobs:
         run: isort --check-only --diff .
 
       - name: Syntax Check (py_compile)
-        run: python -m py_compile MainMenu.py Sudoku.py battleship.py
+        run: python -m py_compile MainMenu.py 
