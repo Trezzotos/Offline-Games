@@ -8,9 +8,14 @@ Per **scaricare** il progetto e configurare il tuo ambiente locale, esegui quest
 git clone git@github.com:USERNAME/nome-repo.git
 cd nome-repo
 git pull origin main
-Setup del virtualenv:
 ```
-
+**Setup del virtualenv**:
+```Plaintext
+python -m venv .venv
+source .venv/bin/activate    # su Linux/macOS
+.venv\Scripts\activate       # su Windows
+pip install -r requirements.txt
+```
 ## Pipeline & Repository Structure
 Per far sì che le automazioni funzionino correttamente, abbiamo mantenuto la struttura del template originale. Le **pipeline** si occupano di **verificare la qualità del codice** ad ogni modifica.
 
@@ -42,11 +47,16 @@ La qualità è fondamentale. Usiamo **pytest** per assicurarci che tutto funzion
 Per far girare i test e vedere il report:
 
 ```
-pytest --cov=src tests/ --cov-report=term-missing
+pytest test_main_menu.py -v --cov=main_menu --cov-report=term-missing
+pytest --cov=sudoku --cov-report=term-missing
+pytest --cov=battleship --cov-report=term-missing
 ```
-⚠️ Nota bene: Il progetto deve mantenere una code coverage minima del 75%. Se la copertura scende sotto questa soglia, la pipeline fallirà.
+⚠️ Il progetto mantiene una code coverage minima del 75%.
 
 # Il Progetto: Offline Games
+![Screenshot del Main Menu](docs/images/MainMenu.png)
+![Screenshot del Sodoku](docs/images/Sodoku.png)
+![Screenshot della Battaglia Navale](docs/images/battleship.png)
 Il software è una raccolta di **giochi classici** sviluppati puramente in **Python**, pensati per essere giocati **senza connessione internet**.
 
 **Sudoku**: Una sfida logica con generazione dinamica delle griglie.
@@ -58,3 +68,4 @@ Per offrire un'esperienza utente superiore e un'interfaccia grafica accattivante
 Libreria Grafica di riferimento:  [pygame] 
 
 ```
+
