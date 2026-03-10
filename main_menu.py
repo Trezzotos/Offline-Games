@@ -121,7 +121,7 @@ class OfflineGames:
         full_path = os.path.join(self.base_dir, target_script)
 
         try:
-            # Pylint suggerisce 'with', ma qui vogliamo che il processo sopravviva al menu
+            # pylint: disable=consider-using-with
             subprocess.Popen([sys.executable, full_path], start_new_session=True)
             self.shutdown()
         except (OSError, subprocess.SubprocessError) as error:
