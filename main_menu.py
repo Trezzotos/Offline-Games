@@ -40,7 +40,10 @@ class OfflineGames:
         # catalogo giochi
         self.catalog: List[Dict[str, str]] = [
             {"label": "SUDOKU", "file": "sudoku/Sudoku.py"},
-            {"label": "BATTAGLIA NAVALE", "file": "battaglia_navale/BattagliaNavale.py"},
+            {
+                "label": "BATTAGLIA NAVALE",
+                "file": "battaglia_navale/BattagliaNavale.py",
+            },
         ]
 
         # directory del progetto
@@ -83,9 +86,7 @@ class OfflineGames:
             is_active = idx == self.pointer
             color = THEME["selection"] if is_active else THEME["text_main"]
             label = self.font_button.render(item["label"], True, color)
-            label_rect = label.get_rect(
-                center=(SCREEN_SIZE[0] // 2, 350 + idx * 110)
-            )
+            label_rect = label.get_rect(center=(SCREEN_SIZE[0] // 2, 350 + idx * 110))
 
             if is_active:
                 glow_rect = label_rect.inflate(50, 25)
@@ -97,8 +98,12 @@ class OfflineGames:
                 )
                 arrow_l = self.font_button.render("> ", True, THEME["selection"])
                 arrow_r = self.font_button.render(" <", True, THEME["selection"])
-                l_pos = arrow_l.get_rect(midright=(glow_rect.left - 15, glow_rect.centery))
-                r_pos = arrow_r.get_rect(midleft=(glow_rect.right + 15, glow_rect.centery))
+                l_pos = arrow_l.get_rect(
+                    midright=(glow_rect.left - 15, glow_rect.centery)
+                )
+                r_pos = arrow_r.get_rect(
+                    midleft=(glow_rect.right + 15, glow_rect.centery)
+                )
                 self.window.blit(arrow_l, l_pos)
                 self.window.blit(arrow_r, r_pos)
 
