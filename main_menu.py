@@ -5,6 +5,7 @@ Dashboard sviluppata con pygame che permette di
 selezionare e avviare diversi giochi Python.
 """
 
+import os
 import subprocess
 import sys
 from typing import List, Dict
@@ -37,10 +38,14 @@ class OfflineGames:
         self.font_button = pygame.font.SysFont("Segoe UI", 32, bold=True)
         self.font_help = pygame.font.SysFont("Segoe UI", 18, italic=True)
 
+        # catalogo giochi
         self.catalog: List[Dict[str, str]] = [
-            {"label": "SUDOKU", "file": "Sudoku.py"},
-            {"label": "BATTAGLIA NAVALE", "file": "BattagliaNavale.py"},
+            {"label": "SUDOKU", "file": "sudoku/Sudoku.py"},
+            {"label": "BATTAGLIA NAVALE", "file": "battaglia_navale/BattagliaNavale.py"},
         ]
+
+        # directory del progetto
+        self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
         self.pointer = 0
 
@@ -80,6 +85,7 @@ class OfflineGames:
         self._render_frame()
 
         for idx, item in enumerate(self.catalog):
+
             is_active = idx == self.pointer
             color = THEME["selection"] if is_active else THEME["text_main"]
 
@@ -130,14 +136,20 @@ class OfflineGames:
 
     def boot_selected_game(self) -> None:
         """Avvia il gioco selezionato."""
+
         target_script = self.catalog[self.pointer]["file"]
 
+        # costruisce path assoluto
+        full_path = os.path.join(self.base_dir, target_script)
+
         try:
-            subprocess.Popen([sys.executable, target_script])
+
+            subprocess.Popen([sys.executable, full_path])
+
             self.shutdown()
 
         except (OSError, subprocess.SubprocessError) as error:
-            print(f"Errore nell'avvio di {target_script}: {error}")
+            print(f"Errore nell'avvio di {full_path}: {error}")
 
     def shutdown(self) -> None:
         """Chiude l'applicazione."""
@@ -146,9 +158,11 @@ class OfflineGames:
 
     def start_engine(self) -> None:
         """Loop principale."""
+
         clock = pygame.time.Clock()
 
         while True:
+
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
