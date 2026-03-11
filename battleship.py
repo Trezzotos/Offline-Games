@@ -134,13 +134,6 @@ def can_place_ship(grid, row, col, dim, toggle):
     if not (0 <= row < num_rows and 0 <= col < num_columns):
         return False
 
-<<<<<<< Updated upstream
-
-# commento
-def place_ship(row, col, ship):
-    dim_ship = player_ships[ship].dimension
-=======
->>>>>>> Stashed changes
     if toggle == 1:
         if col + dim > num_columns:
             return False
