@@ -56,9 +56,7 @@ class TestOfflineGames(unittest.TestCase):
     @patch("subprocess.Popen")
     @patch("builtins.print")
     @patch.object(OfflineGames, "shutdown")
-    def test_boot_selected_game_exception(
-        self, mock_shutdown, mock_print, mock_popen
-    ):
+    def test_boot_selected_game_exception(self, mock_shutdown, mock_print, mock_popen):
         """Verifica la gestione errore durante l'avvio."""
         mock_popen.side_effect = OSError("File non trovato")
         self.app.pointer = 0
