@@ -1,3 +1,4 @@
+# pylint: disable=no-member,consider-using-with
 """
 Main menu grafico per avviare giochi offline.
 
@@ -143,7 +144,7 @@ class OfflineGames:
         full_path = os.path.join(self.base_dir, target_script)
 
         try:
-
+            # pylint: disable=consider-using-with
             subprocess.Popen([sys.executable, full_path])
 
             self.shutdown()
