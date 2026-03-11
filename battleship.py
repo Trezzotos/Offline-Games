@@ -1,3 +1,9 @@
+"""Simple Battleship game built with Pygame."""
+# pylint: disable=no-member,global-statement,too-few-public-methods,\
+# pylint: disable=too-many-branches,too-many-locals,too-many-statements,\
+# pylint: disable=redefined-outer-name,invalid-name,consider-using-enumerate,\
+# pylint: disable=chained-comparison,no-else-return
+
 import random
 import pygame
 
@@ -65,7 +71,9 @@ enemy_attack_start = 0
 
 
 class Cell:
+    """Represent a single cell of the game grid."""
     def __init__(self, contains_ship, hitted, sunk):
+        """Initialize the state stored in the cell."""
         self.contains_ship = contains_ship
         self.hitted = hitted
         self.sunk = sunk
@@ -73,11 +81,14 @@ class Cell:
         self.ship_id = -1
 
     def set_ship_id(self, ship_id):
+        """Store the identifier of the ship occupying the cell."""
         self.ship_id = ship_id
 
 
 class Ship:
+    """Represent a ship with position, size, and remaining health."""
     def __init__(self, dimension):
+        """Create a ship with the given size."""
         global ship_count
         self.ship_id = ship_count
         ship_count += 1
@@ -99,9 +110,11 @@ class Ship:
             self.name = "invalid_name"
 
     def is_sunk(self):
+        """Return True when the ship has no remaining cells."""
         return self.remaining_cells <= 0
 
     def set_coords(self, x, y, user):
+        """Save ship coordinates and map its id on the target grid."""
         self.x = x
         self.y = y
         for i in range(self.dimension):
@@ -117,6 +130,7 @@ class Ship:
                     enemy_grid[y + i][x].set_ship_id(self.ship_id)
 
     def set_direction(self, direction):
+        """Set the ship orientation."""
         self.direction = direction
 
 
@@ -131,6 +145,7 @@ toggle = 1
 
 
 def can_place_ship(grid, row, col, dim, toggle):
+    """Check whether a ship can be placed on the selected cells."""
     if not (0 <= row < num_rows and 0 <= col < num_columns):
         return False
 
@@ -151,6 +166,7 @@ def can_place_ship(grid, row, col, dim, toggle):
 
 
 def get_preview_cells(mx, my, ship_dim, toggle):
+    """Return the preview cells under the mouse and their validity."""
     grid_width = num_columns * cell_dimension
     grid_height = num_rows * cell_dimension
 
@@ -176,6 +192,7 @@ def get_preview_cells(mx, my, ship_dim, toggle):
 
 
 def draw_ship_preview(surface, cells, valid):
+    """Draw the placement preview for the current ship."""
     if not cells:
         return
 
@@ -193,6 +210,7 @@ def draw_ship_preview(surface, cells, valid):
 
 
 def place_ship(row, col, ship_idx, toggle):
+    """Place the selected player ship on the board."""
     ship_obj = player_ships[ship_idx]
     dim_ship = ship_obj.dimension
 
@@ -209,6 +227,7 @@ def place_ship(row, col, ship_idx, toggle):
 
 
 def place_enemy_ships():
+    """Randomly place all enemy ships on the board."""
     global enemy_ships_placed
 
     for i in range(len(enemy_ships)):
@@ -261,6 +280,7 @@ def place_enemy_ships():
 
 
 def enemy_attack():
+    """Execute the enemy attack logic and update the game state."""
     global PLAYER_TURN, player_lives, winner_text, game_over
     global enemy_attack_mode, direction, way
 
@@ -404,6 +424,7 @@ def enemy_attack():
 
 
 def reset_game():
+    """Restore the game to its initial state."""
     global player_grid, enemy_grid
     global player_lives, enemy_lives, ship_count
     global PLAYER_TURN, ships_placed, enemy_ships_placed
@@ -447,6 +468,7 @@ def reset_game():
 
 
 def draw_help_button():
+    """Draw the help button shown during gameplay."""
     pygame.draw.rect(display, BUTTON_BLUE, help_button, border_radius=10)
     pygame.draw.rect(display, WHITE, help_button, 2, border_radius=10)
 
@@ -456,6 +478,7 @@ def draw_help_button():
 
 
 def draw_instructions_overlay():
+    """Draw the instruction overlay panel."""
     overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 170))
     display.blit(overlay, (0, 0))
@@ -572,7 +595,9 @@ while running:
                     col = (mx - enemy_grid_x) // cell_dimension
                     row = (my - enemy_grid_y) // cell_dimension
 
-                    if 0 <= row < num_rows and 0 <= col < num_columns and not enemy_grid[row][col].hitted:
+                    if (0 <= row < num_rows
+                            and 0 <= col < num_columns
+                            and not enemy_grid[row][col].hitted):
                         enemy_grid[row][col].hitted = True
 
                         if enemy_grid[row][col].contains_ship:
@@ -589,12 +614,16 @@ while running:
                             enemy_attack_pending = True
                             enemy_attack_start = pygame.time.get_ticks()
 
-    placement_phase = ships_placed < len(player_ships) and current_ship is not None and not game_over
+    placement_phase = (
+        ships_placed < len(player_ships) and current_ship is not None and not game_over
+    )
 
     if placement_phase:
 
         text_place_your_ships = font_title.render("Place your ships", True, WHITE)
-        text_place_your_ships_rect = text_place_your_ships.get_rect(center=(WIDTH // 2, HEIGHT // 9))
+        text_place_your_ships_rect = (
+            text_place_your_ships.get_rect(center=(WIDTH // 2, HEIGHT // 9))
+        )
         display.blit(text_place_your_ships, text_place_your_ships_rect)
 
         text_ship = font_ship.render(current_ship.name, True, WHITE)
