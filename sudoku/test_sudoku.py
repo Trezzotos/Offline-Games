@@ -19,6 +19,7 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 # FIXTURES
 # =========================
 
+
 @pytest.fixture
 def game():
     """Inizializza l'istanza principale del gioco."""
@@ -35,6 +36,7 @@ def engine():
 # =========================
 # TEST LOGICA (ENGINE)
 # =========================
+
 
 def test_engine_logic(engine):
     """Test delle funzioni principali del motore Sudoku."""
@@ -58,6 +60,7 @@ def test_engine_logic(engine):
 # =========================
 # TEST STATO GIOCO
 # =========================
+
 
 def test_game_setup(game):
     """Test inizializzazione stato gioco."""

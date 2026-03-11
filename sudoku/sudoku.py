@@ -33,6 +33,7 @@ THEME = {
     "panel": (40, 45, 60),
 }
 
+
 class SudokuEngine:
     """Motore logico per generare e risolvere Sudoku."""
 
@@ -51,7 +52,7 @@ class SudokuEngine:
         if num in board[row, :] or num in board[:, col]:
             return False
         r_s, c_s = (row // 3) * 3, (col // 3) * 3
-        if num in board[r_s:r_s+3, c_s:c_s+3]:
+        if num in board[r_s : r_s + 3, c_s : c_s + 3]:
             return False
         return True
 
@@ -83,9 +84,11 @@ class SudokuEngine:
                 attempts -= 1
         return full_board, board
 
+
 # pylint: disable=too-few-public-methods
 class GameState:
     """Contiene lo stato della partita corrente."""
+
     def __init__(self):
         self.solution = None
         self.grid = None
@@ -98,8 +101,10 @@ class GameState:
         self.note_mode = False
         self.difficulty_label = ""
 
+
 class Renderer:
     """Gestisce la visualizzazione grafica del gioco."""
+
     def __init__(self, screen, fonts):
         self.screen = screen
         self.f_big, self.f_med, self.f_small, self.f_note = fonts
@@ -115,19 +120,33 @@ class Renderer:
             txt = self.f_med.render(opt, True, color)
             rect = txt.get_rect(center=(WIDTH // 2, 350 + i * 80))
             if sel:
-                pygame.draw.rect(self.screen, THEME["panel"], rect.inflate(40, 20), border_radius=10)
+                pygame.draw.rect(
+                    self.screen, THEME["panel"], rect.inflate(40, 20), border_radius=10
+                )
             self.screen.blit(txt, rect)
 
     def draw_grid(self):
         """Disegna le linee della griglia."""
         for i in range(10):
             thick = 4 if i % 3 == 0 else 1
-            pygame.draw.line(self.screen, THEME["grid"], (0, i*CELL_SIZE), (WIDTH, i*CELL_SIZE), thick)
-            pygame.draw.line(self.screen, THEME["grid"], (i*CELL_SIZE, 0), (i*CELL_SIZE, WIDTH), thick)
+            pygame.draw.line(
+                self.screen,
+                THEME["grid"],
+                (0, i * CELL_SIZE),
+                (WIDTH, i * CELL_SIZE),
+                thick,
+            )
+            pygame.draw.line(
+                self.screen,
+                THEME["grid"],
+                (i * CELL_SIZE, 0),
+                (i * CELL_SIZE, WIDTH),
+                thick,
+            )
 
     def _draw_cell_content(self, r, c, state):
         val = state.grid[r, c]
-        rect = pygame.Rect(c*CELL_SIZE, r*CELL_SIZE, CELL_SIZE, CELL_SIZE)
+        rect = pygame.Rect(c * CELL_SIZE, r * CELL_SIZE, CELL_SIZE, CELL_SIZE)
         if val != 0:
             color = THEME["fixed"] if state.is_fixed[r, c] else THEME["accent"]
             if val != state.solution[r, c]:
@@ -138,9 +157,9 @@ class Renderer:
             self.screen.blit(img, img.get_rect(center=rect.center))
         elif state.notes[r][c]:
             for n in state.notes[r][c]:
-                idx = n-1
-                nx = c*CELL_SIZE + (idx % 3)*(CELL_SIZE//3) + 8
-                ny = r*CELL_SIZE + (idx // 3)*(CELL_SIZE//3) + 4
+                idx = n - 1
+                nx = c * CELL_SIZE + (idx % 3) * (CELL_SIZE // 3) + 8
+                ny = r * CELL_SIZE + (idx // 3) * (CELL_SIZE // 3) + 4
                 img = self.f_note.render(str(n), True, THEME["note"])
                 self.screen.blit(img, (nx, ny))
 
@@ -149,16 +168,23 @@ class Renderer:
         footer_y = WIDTH + 10
         # Sinistra: Vite
         v_col = THEME["error"] if state.lives == 1 else THEME["text"]
-        self.screen.blit(self.f_small.render(f"VITE: {'I ' * state.lives}", True, v_col), (20, footer_y))
-        
+        self.screen.blit(
+            self.f_small.render(f"VITE: {'I ' * state.lives}", True, v_col),
+            (20, footer_y),
+        )
+
         # Destra: Modalità
-        m_img = self.f_small.render(f"MODALITÀ: {state.difficulty_label}", True, (150, 150, 150))
+        m_img = self.f_small.render(
+            f"MODALITÀ: {state.difficulty_label}", True, (150, 150, 150)
+        )
         self.screen.blit(m_img, (WIDTH - m_img.get_width() - 20, footer_y))
 
         # Centro: Annotazione (Riduciamo variabili locali calcolando on-the-fly)
         s_col = THEME["note"] if state.note_mode else (120, 120, 120)
         lbl = self.f_small.render("[A] ANNOTAZIONE:", True, THEME["text"])
-        val = self.f_small.render("ATTIVA" if state.note_mode else "DISATTIVATA", True, s_col)
+        val = self.f_small.render(
+            "ATTIVA" if state.note_mode else "DISATTIVATA", True, s_col
+        )
         start_x = (WIDTH - (lbl.get_width() + val.get_width())) // 2
         self.screen.blit(lbl, (start_x, footer_y + 45))
         self.screen.blit(val, (start_x + lbl.get_width(), footer_y + 45))
@@ -167,7 +193,9 @@ class Renderer:
             msg = "VITTORIA!" if state.won else "GAME OVER!"
             color = THEME["win"] if state.won else THEME["error"]
             end_img = self.f_small.render(f"{msg} ESC per Menu", True, color)
-            self.screen.blit(end_img, end_img.get_rect(center=(WIDTH // 2, HEIGHT - 35)))
+            self.screen.blit(
+                end_img, end_img.get_rect(center=(WIDTH // 2, HEIGHT - 35))
+            )
 
     def draw_game(self, state):
         """Renderizza l'intera schermata di gioco."""
@@ -179,11 +207,22 @@ class Renderer:
         self._draw_footer(state)
         if not state.won and not state.game_over:
             color = THEME["note"] if state.note_mode else THEME["select"]
-            pygame.draw.rect(self.screen, color, (state.selected[1]*CELL_SIZE,
-                             state.selected[0]*CELL_SIZE, CELL_SIZE, CELL_SIZE), 3)
+            pygame.draw.rect(
+                self.screen,
+                color,
+                (
+                    state.selected[1] * CELL_SIZE,
+                    state.selected[0] * CELL_SIZE,
+                    CELL_SIZE,
+                    CELL_SIZE,
+                ),
+                3,
+            )
+
 
 class SudokuGame:
     """Controller principale."""
+
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -192,7 +231,7 @@ class SudokuGame:
             pygame.font.SysFont("Verdana", 40, bold=True),
             pygame.font.SysFont("Verdana", 30, bold=True),
             pygame.font.SysFont("Verdana", 18),
-            pygame.font.SysFont("Verdana", 14)
+            pygame.font.SysFont("Verdana", 14),
         )
         self.engine = SudokuEngine()
         self.state = GameState()
@@ -263,7 +302,7 @@ class SudokuGame:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     self._handle_global_keys(event)
-            
+
             # Sostituito ternario improprio con if-else standard (Fix W0106)
             if self.state_mode == "MENU":
                 self.renderer.draw_menu(self.menu_options, self.menu_sel)
@@ -289,6 +328,7 @@ class SudokuGame:
                 self.setup_game(self.menu_options[self.menu_sel])
         elif self.state_mode == "PLAYING" and not self.state.game_over:
             self._handle_play_events(event)
+
 
 if __name__ == "__main__":
     SudokuGame().run()
