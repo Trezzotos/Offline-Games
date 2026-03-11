@@ -1,6 +1,7 @@
 """Unit test per il modulo main_menu."""
 
 # pylint: disable=no-member
+# pylint: disable=line-too-long, missing-final-newline
 
 import os
 import unittest

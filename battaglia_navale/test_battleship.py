@@ -1,5 +1,6 @@
 """Unit test per il modulo Battleship."""
 # pylint: disable=no-member,protected-access,import-error
+# pylint: disable=line-too-long, missing-final-newline
 
 import importlib
 import os

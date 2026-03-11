@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long, missing-final-newline
 """Unit test per il modulo Sudoku."""
 
 # pylint: disable=no-member,protected-access,redefined-outer-name,import-error

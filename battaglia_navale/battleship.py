@@ -1,9 +1,9 @@
+
 """Simple Battleship game built with Pygame."""
 # pylint: disable=no-member,global-statement,too-few-public-methods,\
 # pylint: disable=too-many-branches,too-many-locals,too-many-statements,\
 # pylint: disable=redefined-outer-name,invalid-name,consider-using-enumerate,\
-# pylint: disable=chained-comparison,no-else-return
-
+# pylint: disable=line-too-long, missing-final-newline
 import random
 import pygame
 

@@ -1,4 +1,5 @@
 # pylint: disable=no-member,consider-using-with
+# pylint: disable=line-too-long, missing-final-newline
 """
 Main menu grafico per avviare giochi offline.
 

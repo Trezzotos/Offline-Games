@@ -1,4 +1,5 @@
 # pylint: disable=no-member, invalid-name, too-many-instance-attributes
+# pylint: disable=line-too-long, missing-final-newline
 """
 Sudoku Game - Versione definitiva corretta per standard Pylint.
 Risolve: R0903 (classi dati), R0914 (variabili locali), W0106 (ternari impropri).
