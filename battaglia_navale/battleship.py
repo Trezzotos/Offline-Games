@@ -1,5 +1,5 @@
-
 """Simple Battleship game built with Pygame."""
+
 # pylint: disable=no-member,global-statement,too-few-public-methods,\
 # pylint: disable=too-many-branches,too-many-locals,too-many-statements,\
 # pylint: disable=redefined-outer-name,invalid-name,consider-using-enumerate,\
@@ -72,6 +72,7 @@ enemy_attack_start = 0
 
 class Cell:
     """Represent a single cell of the game grid."""
+
     def __init__(self, contains_ship, hitted, sunk):
         """Initialize the state stored in the cell."""
         self.contains_ship = contains_ship
@@ -87,6 +88,7 @@ class Cell:
 
 class Ship:
     """Represent a ship with position, size, and remaining health."""
+
     def __init__(self, dimension):
         """Create a ship with the given size."""
         global ship_count
@@ -134,8 +136,12 @@ class Ship:
         self.direction = direction
 
 
-player_grid = [[Cell(False, False, False) for _ in range(num_columns)] for _ in range(num_rows)]
-enemy_grid = [[Cell(False, False, False) for _ in range(num_columns)] for _ in range(num_rows)]
+player_grid = [
+    [Cell(False, False, False) for _ in range(num_columns)] for _ in range(num_rows)
+]
+enemy_grid = [
+    [Cell(False, False, False) for _ in range(num_columns)] for _ in range(num_rows)
+]
 
 player_ships = [Ship(2), Ship(2), Ship(3), Ship(4), Ship(5)]
 enemy_ships = [Ship(2), Ship(2), Ship(3), Ship(4), Ship(5)]
@@ -170,8 +176,10 @@ def get_preview_cells(mx, my, ship_dim, toggle):
     grid_width = num_columns * cell_dimension
     grid_height = num_rows * cell_dimension
 
-    if not (player_grid_x <= mx < player_grid_x + grid_width and
-            player_grid_y <= my < player_grid_y + grid_height):
+    if not (
+        player_grid_x <= mx < player_grid_x + grid_width
+        and player_grid_y <= my < player_grid_y + grid_height
+    ):
         return [], False
 
     col = (mx - player_grid_x) // cell_dimension
@@ -199,14 +207,18 @@ def draw_ship_preview(surface, cells, valid):
     preview_color = PREVIEW_VALID_COLOR if valid else PREVIEW_INVALID_COLOR
     border_color = PREVIEW_VALID_BORDER if valid else PREVIEW_INVALID_BORDER
 
-    preview_surface = pygame.Surface((cell_dimension - 2, cell_dimension - 2), pygame.SRCALPHA)
+    preview_surface = pygame.Surface(
+        (cell_dimension - 2, cell_dimension - 2), pygame.SRCALPHA
+    )
     preview_surface.fill(preview_color)
 
     for r, c in cells:
         x = c * cell_dimension + player_grid_x
         y = r * cell_dimension + player_grid_y
         surface.blit(preview_surface, (x + 1, y + 1))
-        pygame.draw.rect(surface, border_color, (x, y, cell_dimension, cell_dimension), 2)
+        pygame.draw.rect(
+            surface, border_color, (x, y, cell_dimension, cell_dimension), 2
+        )
 
 
 def place_ship(row, col, ship_idx, toggle):
@@ -244,9 +256,14 @@ def place_enemy_ships():
                 coords_ok = True
 
                 for j in range(ship_dim):
-                    if (enemy_grid[y_e][x_e + j].contains_ship or
-                        (j > 0 and enemy_grid[y_e][x_e + j - 1].contains_ship) or
-                        (j < ship_dim - 1 and enemy_grid[y_e][x_e + j + 1].contains_ship)):
+                    if (
+                        enemy_grid[y_e][x_e + j].contains_ship
+                        or (j > 0 and enemy_grid[y_e][x_e + j - 1].contains_ship)
+                        or (
+                            j < ship_dim - 1
+                            and enemy_grid[y_e][x_e + j + 1].contains_ship
+                        )
+                    ):
                         coords_ok = False
                         break
             else:
@@ -255,9 +272,14 @@ def place_enemy_ships():
                 coords_ok = True
 
                 for j in range(ship_dim):
-                    if (enemy_grid[y_e + j][x_e].contains_ship or
-                        (j > 0 and enemy_grid[y_e + j - 1][x_e].contains_ship) or
-                        (j < ship_dim - 1 and enemy_grid[y_e + j + 1][x_e].contains_ship)):
+                    if (
+                        enemy_grid[y_e + j][x_e].contains_ship
+                        or (j > 0 and enemy_grid[y_e + j - 1][x_e].contains_ship)
+                        or (
+                            j < ship_dim - 1
+                            and enemy_grid[y_e + j + 1][x_e].contains_ship
+                        )
+                    ):
                         coords_ok = False
                         break
 
@@ -356,12 +378,16 @@ def enemy_attack():
             if not player_grid[r][c].hitted and (r + c) % 2 == 0
         ]
 
-        available_cells = parity_cells if parity_cells else [
-            (r, c)
-            for r in range(num_rows)
-            for c in range(num_columns)
-            if not player_grid[r][c].hitted
-        ]
+        available_cells = (
+            parity_cells
+            if parity_cells
+            else [
+                (r, c)
+                for r in range(num_rows)
+                for c in range(num_columns)
+                if not player_grid[r][c].hitted
+            ]
+        )
 
         if not available_cells:
             PLAYER_TURN = True
@@ -398,14 +424,8 @@ def enemy_attack():
                 enemy_attack.hits.append((row, col))
 
         if len(enemy_attack.hits) >= 2:
-            same_row = all(
-                r == enemy_attack.hits[0][0]
-                for r, c in enemy_attack.hits
-            )
-            same_col = all(
-                c == enemy_attack.hits[0][1]
-                for r, c in enemy_attack.hits
-            )
+            same_row = all(r == enemy_attack.hits[0][0] for r, c in enemy_attack.hits)
+            same_col = all(c == enemy_attack.hits[0][1] for r, c in enemy_attack.hits)
 
             if same_row:
                 enemy_attack.orientation = "H"
@@ -462,8 +482,12 @@ def reset_game():
     enemy_attack_pending = False
     enemy_attack_start = 0
 
-    player_grid = [[Cell(False, False, False) for _ in range(num_columns)] for _ in range(num_rows)]
-    enemy_grid = [[Cell(False, False, False) for _ in range(num_columns)] for _ in range(num_rows)]
+    player_grid = [
+        [Cell(False, False, False) for _ in range(num_columns)] for _ in range(num_rows)
+    ]
+    enemy_grid = [
+        [Cell(False, False, False) for _ in range(num_columns)] for _ in range(num_rows)
+    ]
 
     player_ships = [Ship(2), Ship(2), Ship(3), Ship(4), Ship(5)]
     enemy_ships = [Ship(2), Ship(2), Ship(3), Ship(4), Ship(5)]
@@ -528,7 +552,7 @@ def draw_instructions_overlay():
         "",
         "PAUSE / HELP",
         "- Press Help to pause the game.",
-        "- Press the X in the top-right corner to resume."
+        "- Press the X in the top-right corner to resume.",
     ]
 
     start_y = panel_y + 95
@@ -550,7 +574,7 @@ while running:
 
     preview_cells = []
     preview_valid = False
-    #current_ship = None
+    # current_ship = None
 
     if 0 <= ships_placed < len(player_ships):
         current_ship = player_ships[ships_placed]
@@ -563,22 +587,36 @@ while running:
             running = False
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if game_over and event.button == 1 and restart_button.collidepoint(event.pos):
+            if (
+                game_over
+                and event.button == 1
+                and restart_button.collidepoint(event.pos)
+            ):
                 reset_game()
                 continue
 
             if show_instructions:
-                if event.button == 1 and close_instructions_button.collidepoint(event.pos):
+                if event.button == 1 and close_instructions_button.collidepoint(
+                    event.pos
+                ):
                     show_instructions = False
                     if enemy_attack_pending:
                         enemy_attack_start = pygame.time.get_ticks()
                 continue
 
-            if not game_over and event.button == 1 and help_button.collidepoint(event.pos):
+            if (
+                not game_over
+                and event.button == 1
+                and help_button.collidepoint(event.pos)
+            ):
                 show_instructions = True
                 continue
 
-            if ships_placed < len(player_ships) and current_ship is not None and not game_over:
+            if (
+                ships_placed < len(player_ships)
+                and current_ship is not None
+                and not game_over
+            ):
                 if event.button == 1:
                     mx, my = event.pos
                     col = (mx - player_grid_x) // cell_dimension
@@ -593,18 +631,27 @@ while running:
                 elif event.button == 3:
                     toggle *= -1
 
-            elif ships_placed >= len(player_ships) and event.button == 1 and PLAYER_TURN and not game_over:
+            elif (
+                ships_placed >= len(player_ships)
+                and event.button == 1
+                and PLAYER_TURN
+                and not game_over
+            ):
                 mx, my = event.pos
 
-                if (enemy_grid_x <= mx < enemy_grid_x + num_columns * cell_dimension and
-                    enemy_grid_y <= my < enemy_grid_y + num_rows * cell_dimension):
+                if (
+                    enemy_grid_x <= mx < enemy_grid_x + num_columns * cell_dimension
+                    and enemy_grid_y <= my < enemy_grid_y + num_rows * cell_dimension
+                ):
 
                     col = (mx - enemy_grid_x) // cell_dimension
                     row = (my - enemy_grid_y) // cell_dimension
 
-                    if (0 <= row < num_rows
-                            and 0 <= col < num_columns
-                            and not enemy_grid[row][col].hitted):
+                    if (
+                        0 <= row < num_rows
+                        and 0 <= col < num_columns
+                        and not enemy_grid[row][col].hitted
+                    ):
                         enemy_grid[row][col].hitted = True
 
                         if enemy_grid[row][col].contains_ship:
@@ -621,11 +668,15 @@ while running:
                             enemy_attack_pending = True
                             enemy_attack_start = pygame.time.get_ticks()
 
-    placementphase = ships_placed < len(player_ships) and current_ship is not None and not game_over
+    placementphase = (
+        ships_placed < len(player_ships) and current_ship is not None and not game_over
+    )
 
     if placementphase:
         textplaceyourships = font_title.render("Place your ships", True, WHITE)
-        textplaceyourshipsrect = textplaceyourships.get_rect(center=(WIDTH / 2, HEIGHT / 9))
+        textplaceyourshipsrect = textplaceyourships.get_rect(
+            center=(WIDTH / 2, HEIGHT / 9)
+        )
         display.blit(textplaceyourships, textplaceyourshipsrect)
 
         textship = font_ship.render(current_ship.name, True, WHITE)
@@ -647,16 +698,26 @@ while running:
                 cell_x = startx
                 cell_y = starty + i * cell_dimension
 
-            pygame.draw.rect(display, SHIPS_COLOR, (cell_x, cell_y, cell_dimension, cell_dimension))
-            pygame.draw.rect(display, BLACK, (cell_x, cell_y, cell_dimension, cell_dimension), 1)
+            pygame.draw.rect(
+                display, SHIPS_COLOR, (cell_x, cell_y, cell_dimension, cell_dimension)
+            )
+            pygame.draw.rect(
+                display, BLACK, (cell_x, cell_y, cell_dimension, cell_dimension), 1
+            )
 
         for r in range(num_rows):
             for c in range(num_columns):
                 x = c * cell_dimension + player_grid_x
                 y = r * cell_dimension + player_grid_y
                 color = SHIPS_COLOR if player_grid[r][c].contains_ship else BLUE
-                pygame.draw.rect(display, color, (x + 1, y + 1, cell_dimension - 2, cell_dimension - 2))
-                pygame.draw.rect(display, BLUE_GIRD_MARGIN, (x, y, cell_dimension, cell_dimension), 1)
+                pygame.draw.rect(
+                    display,
+                    color,
+                    (x + 1, y + 1, cell_dimension - 2, cell_dimension - 2),
+                )
+                pygame.draw.rect(
+                    display, BLUE_GIRD_MARGIN, (x, y, cell_dimension, cell_dimension), 1
+                )
 
         if not show_instructions:
             draw_ship_preview(display, preview_cells, preview_valid)
@@ -686,7 +747,11 @@ while running:
                 else:
                     color = LIGHT_GRAY
 
-                pygame.draw.rect(display, color, (x + 1, y + 1, cell_dimension - 2, cell_dimension - 2))
+                pygame.draw.rect(
+                    display,
+                    color,
+                    (x + 1, y + 1, cell_dimension - 2, cell_dimension - 2),
+                )
                 pygame.draw.rect(display, BLUE_GIRD_MARGIN, rect, 1)
 
                 if player_grid[r][c].hitted:
@@ -695,15 +760,25 @@ while running:
 
                     if player_grid[r][c].sunk:
                         margin = 8
-                        pygame.draw.line(display, RED,
-                                         (x + margin, y + margin),
-                                         (x + cell_dimension - margin, y + cell_dimension - margin), 3)
-                        pygame.draw.line(display, RED,
-                                         (x + cell_dimension - margin, y + margin),
-                                         (x + margin, y + cell_dimension - margin), 3)
+                        pygame.draw.line(
+                            display,
+                            RED,
+                            (x + margin, y + margin),
+                            (x + cell_dimension - margin, y + cell_dimension - margin),
+                            3,
+                        )
+                        pygame.draw.line(
+                            display,
+                            RED,
+                            (x + cell_dimension - margin, y + margin),
+                            (x + margin, y + cell_dimension - margin),
+                            3,
+                        )
                     else:
                         radius = cell_dimension // 4
-                        pygame.draw.circle(display, WHITE, (center_x, center_y), radius, 3)
+                        pygame.draw.circle(
+                            display, WHITE, (center_x, center_y), radius, 3
+                        )
 
         for r in range(num_rows):
             for c in range(num_columns):
@@ -716,7 +791,11 @@ while running:
                 else:
                     color = LIGHT_GRAY
 
-                pygame.draw.rect(display, color, (x + 1, y + 1, cell_dimension - 2, cell_dimension - 2))
+                pygame.draw.rect(
+                    display,
+                    color,
+                    (x + 1, y + 1, cell_dimension - 2, cell_dimension - 2),
+                )
                 pygame.draw.rect(display, BLUE_GIRD_MARGIN, rect, 1)
 
                 if enemy_grid[r][c].hitted:
@@ -725,27 +804,37 @@ while running:
 
                     if enemy_grid[r][c].sunk:
                         margin = 8
-                        pygame.draw.line(display, RED,
-                                         (x + margin, y + margin),
-                                         (x + cell_dimension - margin, y + cell_dimension - margin), 3)
-                        pygame.draw.line(display, RED,
-                                         (x + cell_dimension - margin, y + margin),
-                                         (x + margin, y + cell_dimension - margin), 3)
+                        pygame.draw.line(
+                            display,
+                            RED,
+                            (x + margin, y + margin),
+                            (x + cell_dimension - margin, y + cell_dimension - margin),
+                            3,
+                        )
+                        pygame.draw.line(
+                            display,
+                            RED,
+                            (x + cell_dimension - margin, y + margin),
+                            (x + margin, y + cell_dimension - margin),
+                            3,
+                        )
                     else:
                         radius = cell_dimension // 4
-                        pygame.draw.circle(display, WHITE, (center_x, center_y), radius, 3)
+                        pygame.draw.circle(
+                            display, WHITE, (center_x, center_y), radius, 3
+                        )
 
         if PLAYER_TURN:
             overlay = pygame.Surface(
                 (num_columns * cell_dimension, num_rows * cell_dimension),
-                pygame.SRCALPHA
+                pygame.SRCALPHA,
             )
             overlay.fill((0, 0, 0, 120))
             display.blit(overlay, (player_grid_x, player_grid_y))
         else:
             overlay = pygame.Surface(
                 (num_columns * cell_dimension, num_rows * cell_dimension),
-                pygame.SRCALPHA
+                pygame.SRCALPHA,
             )
             overlay.fill((0, 0, 0, 120))
             display.blit(overlay, (enemy_grid_x, enemy_grid_y))
