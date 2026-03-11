@@ -550,7 +550,7 @@ while running:
 
     preview_cells = []
     preview_valid = False
-    current_ship = None
+    #current_ship = None
 
     if 0 <= ships_placed < len(player_ships):
         current_ship = player_ships[ships_placed]
