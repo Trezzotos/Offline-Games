@@ -1,6 +1,6 @@
-# pylint: disable=no-member
 """
 Main menu grafico per avviare giochi offline.
+
 Dashboard sviluppata con pygame che permette di
 selezionare e avviare diversi giochi Python.
 """
@@ -29,7 +29,6 @@ class OfflineGames:
     """Dashboard grafica per selezionare e avviare giochi offline."""
 
     def __init__(self) -> None:
-
         pygame.init()
 
         self.window = pygame.display.set_mode(SCREEN_SIZE)
@@ -39,19 +38,21 @@ class OfflineGames:
         self.font_button = pygame.font.SysFont("Segoe UI", 32, bold=True)
         self.font_help = pygame.font.SysFont("Segoe UI", 18, italic=True)
 
-        self.base_dir = os.path.dirname(os.path.abspath(__file__))
-
+        # catalogo giochi
         self.catalog: List[Dict[str, str]] = [
             {"label": "SUDOKU", "file": "sudoku/Sudoku.py"},
             {"label": "BATTAGLIA NAVALE", "file": "battaglia_navale/BattagliaNavale.py"},
         ]
 
+        # directory del progetto
+        self.base_dir = os.path.dirname(os.path.abspath(__file__))
+
         self.pointer = 0
 
     def _render_frame(self) -> None:
         """Disegna il pannello centrale e il titolo."""
-
         margin = 60
+
         rect_width = SCREEN_SIZE[0] - margin * 2
         rect_height = SCREEN_SIZE[1] - margin * 2
 
@@ -63,9 +64,7 @@ class OfflineGames:
         )
 
         title_img = self.font_header.render(
-            "Offline Games Menu",
-            True,
-            THEME["text_main"],
+            "Offline Games Menu", True, THEME["text_main"]
         )
 
         title_pos = title_img.get_rect(center=(SCREEN_SIZE[0] // 2, 160))
@@ -82,7 +81,6 @@ class OfflineGames:
 
     def refresh_ui(self) -> None:
         """Aggiorna la UI."""
-
         self.window.fill(THEME["background"])
         self._render_frame()
 
@@ -98,7 +96,6 @@ class OfflineGames:
             )
 
             if is_active:
-
                 glow_rect = label_rect.inflate(50, 25)
 
                 pygame.draw.rect(
@@ -141,24 +138,21 @@ class OfflineGames:
         """Avvia il gioco selezionato."""
 
         target_script = self.catalog[self.pointer]["file"]
+
+        # costruisce path assoluto
         full_path = os.path.join(self.base_dir, target_script)
 
         try:
 
-            subprocess.Popen(
-                [sys.executable, full_path],
-                start_new_session=True,
-            )
+            subprocess.Popen([sys.executable, full_path])
 
             self.shutdown()
 
         except (OSError, subprocess.SubprocessError) as error:
-
             print(f"Errore nell'avvio di {full_path}: {error}")
 
     def shutdown(self) -> None:
         """Chiude l'applicazione."""
-
         pygame.quit()
         sys.exit()
 
@@ -189,16 +183,9 @@ class OfflineGames:
                         self.shutdown()
 
             self.refresh_ui()
-
             clock.tick(60)
 
 
-def main() -> None:
-    """Entry point dell'applicazione."""
-
+if __name__ == "__main__":
     app = OfflineGames()
     app.start_engine()
-
-
-if __name__ == "__main__":
-    main()
