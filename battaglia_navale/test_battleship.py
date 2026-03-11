@@ -51,10 +51,10 @@ def load_module(monkeypatch, event_frames=None, mouse_positions=None, tick_value
     monkeypatch.setattr(pygame.mouse, "get_pos", fake_mouse_get_pos)
     monkeypatch.setattr(pygame.time, "get_ticks", fake_get_ticks)
 
-    if "battleship_fixed" in sys.modules:
-        del sys.modules["battleship_fixed"]
+    if "battleship" in sys.modules:
+        del sys.modules["battleship"]
 
-    module = importlib.import_module("battleship_fixed")
+    module = importlib.import_module("battleship")
     pygame.init()
     return module
 
