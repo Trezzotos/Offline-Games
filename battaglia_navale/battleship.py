@@ -397,8 +397,14 @@ def enemy_attack():
                     enemy_attack.hits.append((row, col))
 
             if len(enemy_attack.hits) >= 2:
-                same_row = all(r == enemy_attack.hits[0][0] for r, c in enemy_attack.hits)
-                same_col = all(c == enemy_attack.hits[0][1] for r, c in enemy_attack.hits)
+                same_row = all(
+                    r == enemy_attack.hits[0][0]
+                    for r, c in enemy_attack.hits
+                )
+                same_col = all(
+                    c == enemy_attack.hits[0][1]
+                    for r, c in enemy_attack.hits
+                )
 
                 if same_row:
                     enemy_attack.orientation = "H"
@@ -413,14 +419,16 @@ def enemy_attack():
                 direction = 0
                 way = 0
             else:
-                enemy_attack_mode = 3 if enemy_attack.orientation else 2
+                enemy_attack_mode = (
+                    3 if enemy_attack.orientation else 2
+                )
                 way = 1
 
         PLAYER_TURN = False
         return True
-    else:
-        PLAYER_TURN = True
-        return True
+
+    PLAYER_TURN = True
+    return True
 
 
 def reset_game():
