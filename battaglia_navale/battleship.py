@@ -621,37 +621,31 @@ while running:
                             enemy_attack_pending = True
                             enemy_attack_start = pygame.time.get_ticks()
 
-    placement_phase = (
-        ships_placed < len(player_ships) and current_ship is not None and not game_over
-    )
+    placementphase = ships_placed < len(player_ships) and current_ship is not None and not game_over
 
-    if placement_phase:
+    if placementphase:
+        textplaceyourships = font_title.render("Place your ships", True, WHITE)
+        textplaceyourshipsrect = textplaceyourships.get_rect(center=(WIDTH / 2, HEIGHT / 9))
+        display.blit(textplaceyourships, textplaceyourshipsrect)
 
-        text_place_your_ships = font_title.render("Place your ships", True, WHITE)
-        text_place_your_ships_rect = (
-            text_place_your_ships.get_rect(center=(WIDTH // 2, HEIGHT // 9))
-        )
-        display.blit(text_place_your_ships, text_place_your_ships_rect)
-
-        text_ship = font_ship.render(current_ship.name, True, WHITE)
-        text_ship_rect = text_ship.get_rect(center=(WIDTH // 2, HEIGHT // 5))
-        display.blit(text_ship, text_ship_rect)
+        textship = font_ship.render(current_ship.name, True, WHITE)
+        textshiprect = textship.get_rect(center=(WIDTH / 2, HEIGHT / 5))
+        display.blit(textship, textshiprect)
 
         if toggle == 1:
-            ship_width = current_ship.dimension * cell_dimension
+            shipwidth = current_ship.dimension * cell_dimension
         else:
-            ship_width = cell_dimension
+            shipwidth = cell_dimension
 
-        start_x = WIDTH // 2 - ship_width // 2
-        start_y = HEIGHT // 4
-
+        startx = WIDTH / 2 - shipwidth / 2
+        starty = HEIGHT / 4
         for i in range(current_ship.dimension):
             if toggle == 1:
-                cell_x = start_x + i * cell_dimension
-                cell_y = start_y
+                cell_x = startx + i * cell_dimension
+                cell_y = starty
             else:
-                cell_x = start_x
-                cell_y = start_y + i * cell_dimension
+                cell_x = startx
+                cell_y = starty + i * cell_dimension
 
             pygame.draw.rect(display, SHIPS_COLOR, (cell_x, cell_y, cell_dimension, cell_dimension))
             pygame.draw.rect(display, BLACK, (cell_x, cell_y, cell_dimension, cell_dimension), 1)
