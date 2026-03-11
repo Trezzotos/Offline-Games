@@ -5,6 +5,7 @@
 # pylint: disable=redefined-outer-name,invalid-name,consider-using-enumerate,\
 # pylint: disable=line-too-long, missing-final-newline
 import random
+
 import pygame
 
 pygame.init()

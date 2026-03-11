@@ -8,6 +8,7 @@ Risolve: R0903 (classi dati), R0914 (variabili locali), W0106 (ternari impropri)
 import random
 import subprocess
 import sys
+
 import numpy as np
 import pygame
 

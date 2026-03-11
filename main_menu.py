@@ -9,7 +9,7 @@ selezionare e avviare diversi giochi Python.
 import os
 import subprocess
 import sys
-from typing import List, Dict
+from typing import Dict, List
 
 import pygame
 
