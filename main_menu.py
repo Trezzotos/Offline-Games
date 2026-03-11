@@ -1,5 +1,4 @@
-# pylint: disable=no-member,consider-using-with
-# pylint: disable=line-too-long, missing-final-newline
+# pylint: disable=no-member,consider-using-with,line-too-long
 """
 Main menu grafico per avviare giochi offline.
 
@@ -13,7 +12,6 @@ import sys
 from typing import List, Dict
 
 import pygame
-
 
 SCREEN_SIZE = (700, 700)
 
