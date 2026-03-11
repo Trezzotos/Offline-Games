@@ -1,145 +1,152 @@
-# main.py
-"""
-Main menu grafico per avviare giochi offline.
-Dashboard sviluppata con pygame che permette di
-selezionare e avviare diversi giochi Python.
-"""
-
-import subprocess
+import os
 import sys
-from typing import List, Dict
-
+import unittest
+from unittest.mock import patch, MagicMock
 import pygame
 
-SCREEN_SIZE = (700, 700)
+# 1. Imposta driver video/audio "dummy" PRIMA di importare il main_menu
+# Questo permette ai test grafici di girare in background senza aprire finestre.
+os.environ["SDL_VIDEODRIVER"] = "dummy"
+os.environ["SDL_AUDIODRIVER"] = "dummy"
 
-THEME = {
-    "background": (25, 25, 35),
-    "panel": (15, 15, 20),
-    "text_main": (235, 235, 235),
-    "accent": (0, 180, 255),
-    "selection": (255, 160, 0),
-    "footer": (120, 120, 130),
-}
+# Importiamo il modulo dopo aver settato l'ambiente dummy
+import main_menu
+from main_menu import OfflineGames
 
-
-class OfflineGames:
-    """Dashboard grafica per selezionare e avviare giochi offline."""
-
-    def __init__(self) -> None:
+class TestOfflineGames(unittest.TestCase):
+    
+    def setUp(self):
+        """Prepara l'ambiente prima di ogni test."""
+        # Forziamo l'init di pygame in modalità dummy
         pygame.init()
-        self.window = pygame.display.set_mode(SCREEN_SIZE)
-        pygame.display.set_caption("MULTIGAME DASHBOARD")
+        self.app = OfflineGames()
 
-        self.font_header = pygame.font.SysFont("Segoe UI", 55, bold=True)
-        self.font_button = pygame.font.SysFont("Segoe UI", 32, bold=True)
-        self.font_help = pygame.font.SysFont("Segoe UI", 18, italic=True)
-
-        # Catalogo giochi: usare 'module' per pacchetti, 'script' per file singoli
-        self.catalog: List[Dict[str, str]] = [
-            {"label": "SUDOKU", "module": "sudoku.main"},
-            {"label": "BATTAGLIA NAVALE", "script": "BattagliaNavale.py"},
-        ]
-
-        self.pointer = 0
-
-    def _render_frame(self) -> None:
-        """Disegna il pannello centrale e il titolo."""
-        margin = 60
-        rect_width = SCREEN_SIZE[0] - margin * 2
-        rect_height = SCREEN_SIZE[1] - margin * 2
-
-        pygame.draw.rect(
-            self.window,
-            THEME["panel"],
-            (margin, margin, rect_width, rect_height),
-            border_radius=30,
-        )
-
-        title_img = self.font_header.render(
-            "Offline Games Menu", True, THEME["text_main"]
-        )
-        title_pos = title_img.get_rect(center=(SCREEN_SIZE[0] // 2, 160))
-
-        pygame.draw.line(
-            self.window,
-            THEME["accent"],
-            (250, 200),
-            (450, 200),
-            3,
-        )
-
-        self.window.blit(title_img, title_pos)
-
-    def refresh_ui(self) -> None:
-        """Aggiorna la UI."""
-        self.window.fill(THEME["background"])
-        self._render_frame()
-
-        for idx, item in enumerate(self.catalog):
-            is_active = idx == self.pointer
-            color = THEME["selection"] if is_active else THEME["text_main"]
-            label = self.font_button.render(item["label"], True, color)
-            label_rect = label.get_rect(center=(SCREEN_SIZE[0] // 2, 350 + idx * 110))
-
-            if is_active:
-                glow_rect = label_rect.inflate(50, 25)
-                pygame.draw.rect(self.window, (40, 45, 60), glow_rect, border_radius=15)
-
-                arrow_l = self.font_button.render("> ", True, THEME["selection"])
-                arrow_r = self.font_button.render(" <", True, THEME["selection"])
-                l_pos = arrow_l.get_rect(midright=(glow_rect.left - 15, glow_rect.centery))
-                r_pos = arrow_r.get_rect(midleft=(glow_rect.right + 15, glow_rect.centery))
-                self.window.blit(arrow_l, l_pos)
-                self.window.blit(arrow_r, r_pos)
-
-            self.window.blit(label, label_rect)
-
-        hint = self.font_help.render("Naviga con ↑↓ • Conferma con INVIO", True, THEME["footer"])
-        self.window.blit(hint, hint.get_rect(center=(SCREEN_SIZE[0] // 2, 620)))
-
-        pygame.display.flip()
-
-    def boot_selected_game(self) -> None:
-        """Avvia il gioco selezionato."""
-        item = self.catalog[self.pointer]
-
-        try:
-            if "module" in item:
-                subprocess.Popen([sys.executable, "-m", item["module"]])
-            elif "script" in item:
-                subprocess.Popen([sys.executable, item["script"]])
-            self.shutdown()
-
-        except (OSError, subprocess.SubprocessError) as error:
-            print(f"Errore nell'avvio del gioco: {error}")
-
-    def shutdown(self) -> None:
-        """Chiude l'applicazione."""
+    def tearDown(self):
+        """Pulisce l'ambiente dopo ogni test."""
         pygame.quit()
-        sys.exit()
 
-    def start_engine(self) -> None:
-        """Loop principale."""
-        clock = pygame.time.Clock()
+    def test_init_state(self):
+        """Verifica lo stato iniziale della dashboard."""
+        self.assertEqual(self.app.pointer, 0)
+        self.assertEqual(len(self.app.catalog), 2)
+        self.assertIn("SUDOKU", self.app.catalog[0]["label"])
 
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.shutdown()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP:
-                        self.pointer = (self.pointer - 1) % len(self.catalog)
-                    elif event.key == pygame.K_DOWN:
-                        self.pointer = (self.pointer + 1) % len(self.catalog)
-                    elif event.key == pygame.K_RETURN:
-                        self.boot_selected_game()
-                    elif event.key == pygame.K_ESCAPE:
-                        self.shutdown()
-            self.refresh_ui()
-            clock.tick(60)
+    @patch('sys.exit')
+    def test_shutdown(self, mock_exit):
+        """Verifica che la funzione shutdown chiami sys.exit()"""
+        self.app.shutdown()
+        mock_exit.assert_called_once()
 
+    @patch('subprocess.Popen')
+    @patch.object(OfflineGames, 'shutdown')
+    def test_boot_selected_game_success(self, mock_shutdown, mock_popen):
+        """Verifica il corretto avvio di un gioco."""
+        self.app.pointer = 1  # Selezioniamo BATTAGLIA NAVALE
+        self.app.boot_selected_game()
+        
+        # Verifica che subprocess.Popen sia stato chiamato
+        mock_popen.assert_called_once()
+        # Verifica che il path contenga il file corretto
+        called_args = mock_popen.call_args[0][0]
+        self.assertIn("BattagliaNavale.py", called_args[1])
+        # Verifica che l'app venga chiusa dopo l'avvio
+        mock_shutdown.assert_called_once()
 
-if __name__ == "__main__":
-    app = OfflineGames()
-    app.start_engine()
+    @patch('subprocess.Popen')
+    @patch('builtins.print')
+    @patch.object(OfflineGames, 'shutdown')
+    def test_boot_selected_game_exception(self, mock_shutdown, mock_print, mock_popen):
+        """Verifica la gestione dell'errore (OSError) in fase di avvio."""
+        mock_popen.side_effect = OSError("File non trovato")
+        self.app.pointer = 0
+        
+        self.app.boot_selected_game()
+        
+        # Il programma non deve chiudersi se l'avvio fallisce
+        mock_shutdown.assert_not_called()
+        # Deve però stampare l'errore a terminale
+        mock_print.assert_called_once()
+
+    @patch('pygame.display.flip')
+    def test_rendering(self, mock_flip):
+        """
+        Esegue il rendering UI forzando i rami if/else 
+        per massimizzare la coverage visiva.
+        """
+        self.app.pointer = 1  # Mettiamo il puntatore su un elemento diverso da 0
+        self.app.refresh_ui()
+        mock_flip.assert_called_once()
+
+    # --- Test del loop infinito ---
+    # Usiamo side_effect su clock.tick per lanciare un'eccezione
+    # e rompere il 'while True' altrimenti il test si bloccherebbe per sempre.
+    
+    
+    @patch('pygame.time.Clock')
+    @patch('pygame.event.get')
+    def test_start_engine_navigation_down(self, mock_event_get, mock_clock_class):
+        """Verifica la navigazione verso il BASSO."""
+        mock_clock_inst = MagicMock()
+        mock_clock_inst.tick.side_effect = StopIteration
+        mock_clock_class.return_value = mock_clock_inst
+        
+        mock_event_get.return_value = [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_DOWN)]
+        
+        with self.assertRaises(StopIteration):
+            self.app.start_engine()
+            
+        self.assertEqual(self.app.pointer, 1)
+
+    @patch('pygame.time.Clock')
+    @patch('pygame.event.get')
+    def test_start_engine_navigation_up(self, mock_event_get, mock_clock_class):
+        """Verifica la navigazione verso l'ALTO."""
+        mock_clock_inst = MagicMock()
+        mock_clock_inst.tick.side_effect = StopIteration
+        mock_clock_class.return_value = mock_clock_inst
+
+        self.app.pointer = 0
+        mock_event_get.return_value = [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_UP)]
+        
+        with self.assertRaises(StopIteration):
+            self.app.start_engine()
+            
+        # Essendo 0, facendo SU, con il modulo (%) andrà all'ultimo elemento
+        self.assertEqual(self.app.pointer, len(self.app.catalog) - 1)
+
+    @patch('pygame.time.Clock')
+    @patch('pygame.event.get')
+    @patch.object(OfflineGames, 'boot_selected_game')
+    def test_start_engine_return(self, mock_boot, mock_event_get, mock_clock_class):
+        """Verifica che premendo INVIO si chiami il boot del gioco."""
+        mock_clock_inst = MagicMock()
+        mock_clock_inst.tick.side_effect = StopIteration
+        mock_clock_class.return_value = mock_clock_inst
+
+        mock_event_get.return_value = [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)]
+        
+        with self.assertRaises(StopIteration):
+            self.app.start_engine()
+            
+        mock_boot.assert_called_once()
+
+    @patch('pygame.time.Clock')
+    @patch('pygame.event.get')
+    @patch.object(OfflineGames, 'shutdown')
+    def test_start_engine_quit(self, mock_shutdown, mock_event_get, mock_clock_class):
+        """Verifica la chiusura tramite pulsante (X) o tasto ESC."""
+        mock_clock_inst = MagicMock()
+        mock_clock_inst.tick.side_effect = StopIteration
+        mock_clock_class.return_value = mock_clock_inst
+
+        # Testiamo ESC
+        mock_event_get.return_value = [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE)]
+        with self.assertRaises(StopIteration):
+            self.app.start_engine()
+        
+        # Testiamo evento QUIT (X della finestra)
+        mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
+        with self.assertRaises(StopIteration):
+            self.app.start_engine()
+
+        self.assertEqual(mock_shutdown.call_count, 2)
