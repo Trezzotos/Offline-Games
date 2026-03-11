@@ -1,4 +1,5 @@
 """Unit test per il modulo Battleship."""
+
 # pylint: disable=no-member,protected-access,import-error
 # pylint: disable=line-too-long, missing-final-newline
 
@@ -74,7 +75,6 @@ def test_module_import_and_basic_state(game_module):
     assert game_module.enemy_ships_placed is True
 
 
-
 def test_cell_and_ship_methods(game_module):
     """Verifica i metodi base delle classi Cell e Ship."""
     game_module.reset_game()
@@ -96,7 +96,6 @@ def test_cell_and_ship_methods(game_module):
 
     ship.remaining_cells = 0
     assert ship.is_sunk() is True
-
 
 
 def test_can_place_preview_and_draw(game_module):
@@ -124,7 +123,6 @@ def test_can_place_preview_and_draw(game_module):
     game_module.draw_ship_preview(game_module.display, cells, False)
 
 
-
 def test_place_ship_and_enemy_ships(game_module):
     """Controlla il piazzamento del giocatore e quello casuale del nemico."""
     game_module.reset_game()
@@ -145,7 +143,6 @@ def test_place_ship_and_enemy_ships(game_module):
     occupied = sum(cell.contains_ship for row in game_module.enemy_grid for cell in row)
     assert occupied == 16
     assert game_module.enemy_ships_placed is True
-
 
 
 def test_enemy_attack_paths(game_module, monkeypatch):
@@ -187,7 +184,6 @@ def test_enemy_attack_paths(game_module, monkeypatch):
     assert game_module.PLAYER_TURN is True
 
 
-
 def test_reset_and_draw_helpers(game_module):
     """Controlla reset completo e funzioni di disegno di supporto."""
     game_module.player_lives = 1
@@ -214,7 +210,6 @@ def test_reset_and_draw_helpers(game_module):
     assert game_module.show_instructions is False
 
 
-
 def test_import_flow_help_overlay(monkeypatch):
     """Simula il click sul pulsante Help durante il loop principale."""
     help_click = pygame.event.Event(
@@ -231,7 +226,6 @@ def test_import_flow_help_overlay(monkeypatch):
     assert module.show_instructions is True
 
 
-
 def test_import_flow_placement_and_attack(monkeypatch):
     """Simula piazzamento navi e un attacco del giocatore nel loop principale."""
     player_x = 200
@@ -240,14 +234,46 @@ def test_import_flow_placement_and_attack(monkeypatch):
     enemy_y = 10
 
     frames = [
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 5))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 5))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 85, player_y + 5))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 85))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 85))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 165))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 245))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(enemy_x + 5, enemy_y + 5))],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 5)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 5)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 85, player_y + 5)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 85)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 85)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 165)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 245)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(enemy_x + 5, enemy_y + 5)
+            )
+        ],
         [pygame.event.Event(pygame.QUIT)],
     ]
     positions = [

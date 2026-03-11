@@ -93,9 +93,7 @@ class OfflineGames:
 
             label = self.font_button.render(item["label"], True, color)
 
-            label_rect = label.get_rect(
-                center=(SCREEN_SIZE[0] // 2, 350 + idx * 110)
-            )
+            label_rect = label.get_rect(center=(SCREEN_SIZE[0] // 2, 350 + idx * 110))
 
             if is_active:
                 glow_rect = label_rect.inflate(50, 25)
