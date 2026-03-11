@@ -54,9 +54,15 @@ pytest --cov=battleship --cov-report=term-missing
 ⚠️ Il progetto mantiene una code coverage minima del 75%.
 
 # Il Progetto: Offline Games
+## Main Menu
 ![Screenshot del Main Menu](docs/images/MainMenu.png)
-![Screenshot del Sodoku](docs/images/Sodoku.png)
-![Screenshot della Battaglia Navale](docs/images/battleship.png)
+
+## Sudoku
+![Screenshot del Sodoku](docs/images/Sudoku.png)
+
+## Battaglia Navale
+![Screenshot della Battaglia Navale](docs/images/Battleship.png)
+
 Il software è una raccolta di **giochi classici** sviluppati puramente in **Python**, pensati per essere giocati **senza connessione internet**.
 
 **Sudoku**: Una sfida logica con generazione dinamica delle griglie.
@@ -66,6 +72,6 @@ Il software è una raccolta di **giochi classici** sviluppati puramente in **Pyt
 Per offrire un'esperienza utente superiore e un'interfaccia grafica accattivante, il progetto utilizza:
 ```
 Libreria Grafica di riferimento:  [pygame] 
-
 ```
+
 
