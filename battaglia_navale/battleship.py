@@ -388,41 +388,39 @@ def enemy_attack():
         if 0 <= ship_id < len(player_ships):
             player_ships[ship_id].remaining_cells -= 1
 
-            if enemy_attack.target_ship_id != ship_id:
-                enemy_attack.target_ship_id = ship_id
-                enemy_attack.hits = [(row, col)]
-                enemy_attack.orientation = None
-            else:
-                if (row, col) not in enemy_attack.hits:
-                    enemy_attack.hits.append((row, col))
+        if enemy_attack.target_ship_id != ship_id:
+            enemy_attack.target_ship_id = ship_id
+            enemy_attack.hits = [(row, col)]
+            enemy_attack.orientation = None
+        else:
+            if (row, col) not in enemy_attack.hits:
+                enemy_attack.hits.append((row, col))
 
-            if len(enemy_attack.hits) >= 2:
-                same_row = all(
-                    r == enemy_attack.hits[0][0]
-                    for r, c in enemy_attack.hits
-                )
-                same_col = all(
-                    c == enemy_attack.hits[0][1]
-                    for r, c in enemy_attack.hits
-                )
+        if len(enemy_attack.hits) >= 2:
+            same_row = all(
+                r == enemy_attack.hits[0][0]
+                for r, c in enemy_attack.hits
+            )
+            same_col = all(
+                c == enemy_attack.hits[0][1]
+                for r, c in enemy_attack.hits
+            )
 
-                if same_row:
-                    enemy_attack.orientation = "H"
-                    direction = 1
-                elif same_col:
-                    enemy_attack.orientation = "V"
-                    direction = -1
+            if same_row:
+                enemy_attack.orientation = "H"
+                direction = 1
+            elif same_col:
+                enemy_attack.orientation = "V"
+                direction = -1
 
-            if player_ships[ship_id].remaining_cells <= 0:
-                reset_target()
-                enemy_attack_mode = 1
-                direction = 0
-                way = 0
-            else:
-                enemy_attack_mode = (
-                    3 if enemy_attack.orientation else 2
-                )
-                way = 1
+        if player_ships[ship_id].remaining_cells <= 0:
+            reset_target()
+            enemy_attack_mode = 1
+            direction = 0
+            way = 0
+        else:
+            enemy_attack_mode = 3 if enemy_attack.orientation else 2
+            way = 1
 
         PLAYER_TURN = False
         return True
