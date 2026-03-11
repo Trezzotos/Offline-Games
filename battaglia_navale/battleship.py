@@ -299,8 +299,9 @@ def enemy_attack():
 
     if enemy_attack.target_ship_id is not None:
         sid = enemy_attack.target_ship_id
-        if 0 <= sid < len(player_ships) and player_ships[sid].remaining_cells <= 0:
-            reset_target()
+        if 0 <= sid < len(player_ships):
+            if player_ships[sid].remaining_cells <= 0:
+                reset_target()
 
     shot = None
 
