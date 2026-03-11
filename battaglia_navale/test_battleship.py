@@ -1,15 +1,18 @@
+"""Unit test per il modulo Battleship."""
+# pylint: disable=no-member,protected-access,import-error
+
+import importlib
 import os
 import sys
-import importlib
-
-os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 import pygame
 import pytest
 
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 
 def load_module(monkeypatch, event_frames=None, mouse_positions=None, tick_values=None):
+    """Importa il modulo di gioco con eventi e timer controllati nei test."""
     pygame.init()
     event_frames = event_frames or [[pygame.event.Event(pygame.QUIT)]]
     mouse_positions = mouse_positions or [(0, 0)]
@@ -21,12 +24,14 @@ def load_module(monkeypatch, event_frames=None, mouse_positions=None, tick_value
     last_pos = [mouse_positions[-1]]
 
     def fake_event_get():
+        """Restituisce una sequenza controllata di eventi pygame."""
         try:
             return next(frame_iter)
         except StopIteration:
             return [pygame.event.Event(pygame.QUIT)]
 
     def fake_mouse_get_pos():
+        """Restituisce posizioni del mouse predefinite."""
         try:
             last_pos[0] = next(pos_iter)
         except StopIteration:
@@ -34,6 +39,7 @@ def load_module(monkeypatch, event_frames=None, mouse_positions=None, tick_value
         return last_pos[0]
 
     def fake_get_ticks():
+        """Restituisce tempi predefiniti per simulare il clock di gioco."""
         try:
             return next(tick_iter)
         except StopIteration:
@@ -51,12 +57,14 @@ def load_module(monkeypatch, event_frames=None, mouse_positions=None, tick_value
     return module
 
 
-@pytest.fixture
-def game_module(monkeypatch):
+@pytest.fixture(name="game_module")
+def fixture_game_module(monkeypatch):
+    """Fornisce il modulo Battleship già importato per i test."""
     return load_module(monkeypatch)
 
 
 def test_module_import_and_basic_state(game_module):
+    """Controlla che il modulo venga importato con lo stato iniziale atteso."""
     assert game_module.WIDTH == 800
     assert game_module.HEIGHT == 900
     assert len(game_module.player_grid) == 10
@@ -65,7 +73,9 @@ def test_module_import_and_basic_state(game_module):
     assert game_module.enemy_ships_placed is True
 
 
+
 def test_cell_and_ship_methods(game_module):
+    """Verifica i metodi base delle classi Cell e Ship."""
     game_module.reset_game()
 
     cell = game_module.Cell(True, False, False)
@@ -89,6 +99,7 @@ def test_cell_and_ship_methods(game_module):
 
 
 def test_can_place_preview_and_draw(game_module):
+    """Testa validazione del piazzamento, anteprima e disegno preview."""
     game_module.reset_game()
 
     assert game_module.can_place_ship(game_module.player_grid, 0, 0, 2, 1) is True
@@ -98,9 +109,9 @@ def test_can_place_preview_and_draw(game_module):
     assert game_module.can_place_ship(game_module.player_grid, 9, 9, 3, -1) is False
 
     game_module.reset_game()
-    mx = game_module.player_grid_x + 5
-    my = game_module.player_grid_y + 5
-    cells, valid = game_module.get_preview_cells(mx, my, 2, 1)
+    mouse_x = game_module.player_grid_x + 5
+    mouse_y = game_module.player_grid_y + 5
+    cells, valid = game_module.get_preview_cells(mouse_x, mouse_y, 2, 1)
     assert cells == [(0, 0), (0, 1)]
     assert valid is True
 
@@ -114,6 +125,7 @@ def test_can_place_preview_and_draw(game_module):
 
 
 def test_place_ship_and_enemy_ships(game_module):
+    """Controlla il piazzamento del giocatore e quello casuale del nemico."""
     game_module.reset_game()
 
     game_module.place_ship(0, 0, 0, 1)
@@ -136,6 +148,7 @@ def test_place_ship_and_enemy_ships(game_module):
 
 
 def test_enemy_attack_paths(game_module, monkeypatch):
+    """Verifica diversi rami della logica di attacco del nemico."""
     game_module.reset_game()
     pygame.init()
 
@@ -164,8 +177,8 @@ def test_enemy_attack_paths(game_module, monkeypatch):
     assert result is True
     assert game_module.player_grid[0][2].hitted is True
 
-    for row in game_module.player_grid:
-        for cell in row:
+    for row_cells in game_module.player_grid:
+        for cell in row_cells:
             cell.hitted = True
     game_module.PLAYER_TURN = False
     result = game_module.enemy_attack()
@@ -175,6 +188,7 @@ def test_enemy_attack_paths(game_module, monkeypatch):
 
 
 def test_reset_and_draw_helpers(game_module):
+    """Controlla reset completo e funzioni di disegno di supporto."""
     game_module.player_lives = 1
     game_module.enemy_lives = 1
     game_module.PLAYER_TURN = False
@@ -201,6 +215,7 @@ def test_reset_and_draw_helpers(game_module):
 
 
 def test_import_flow_help_overlay(monkeypatch):
+    """Simula il click sul pulsante Help durante il loop principale."""
     help_click = pygame.event.Event(
         pygame.MOUSEBUTTONDOWN,
         button=1,
@@ -217,6 +232,7 @@ def test_import_flow_help_overlay(monkeypatch):
 
 
 def test_import_flow_placement_and_attack(monkeypatch):
+    """Simula piazzamento navi e un attacco del giocatore nel loop principale."""
     player_x = 200
     player_y = 490
     enemy_x = 200
