@@ -3,7 +3,8 @@
 # pylint: disable=no-member,global-statement,too-few-public-methods,\
 # pylint: disable=too-many-branches,too-many-locals,too-many-statements,\
 # pylint: disable=redefined-outer-name,invalid-name,consider-using-enumerate,\
-# pylint: disable=line-too-long, missing-final-newline
+# pylint: disable=line-too-long, missing-final-newline, too-many-nested-blocks
+
 import random
 
 import pygame
