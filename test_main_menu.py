@@ -1,13 +1,13 @@
-"""Unit test per il modulo main_menu."""
+# pylint: disable=line-too-long, missing-final-newline, import-error
+# pylint: disable=no-member, redefined-outer-name
 
-# pylint: disable=no-member
-# pylint: disable=line-too-long, missing-final-newline
+"""Unit test per il modulo main_menu con pytest."""
 
 import os
-import unittest
 from unittest.mock import MagicMock, patch
 
 import pygame
+import pytest
 
 from main_menu import OfflineGames
 
@@ -15,138 +15,152 @@ from main_menu import OfflineGames
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ["SDL_AUDIODRIVER"] = "dummy"
 
+# =========================
+# FIXTURES
+# =========================
 
-class TestOfflineGames(unittest.TestCase):
-    """Test della dashboard OfflineGames."""
 
-    def setUp(self):
-        """Prepara l'ambiente prima di ogni test."""
-        pygame.init()
-        self.app = OfflineGames()
+@pytest.fixture
+def app():
+    """Fixture che gestisce il ciclo di vita dell'app OfflineGames."""
+    pygame.init()
+    app_instance = OfflineGames()
+    yield app_instance
+    pygame.quit()
 
-    def tearDown(self):
-        """Pulisce l'ambiente dopo ogni test."""
-        pygame.quit()
 
-    def test_init_state(self):
-        """Verifica lo stato iniziale della dashboard."""
-        self.assertEqual(self.app.pointer, 0)
-        self.assertEqual(len(self.app.catalog), 2)
-        self.assertIn("SUDOKU", self.app.catalog[0]["label"])
+# =========================
+# TEST DASHBOARD
+# =========================
 
-    @patch("sys.exit")
-    def test_shutdown(self, mock_exit):
-        """Verifica che shutdown chiami sys.exit()."""
-        self.app.shutdown()
-        mock_exit.assert_called_once()
 
-    @patch("subprocess.Popen")
-    @patch.object(OfflineGames, "shutdown")
-    def test_boot_selected_game_success(self, mock_shutdown, mock_popen):
-        """Verifica il corretto avvio di un gioco."""
-        self.app.pointer = 1
-        self.app.boot_selected_game()
+def test_init_state(app):
+    """Verifica lo stato iniziale della dashboard."""
+    assert app.pointer == 0
+    assert len(app.catalog) == 2
+    assert "SUDOKU" in app.catalog[0]["label"]
 
-        mock_popen.assert_called_once()
 
-        called_args = mock_popen.call_args[0][0]
-        self.assertIn("BattagliaNavale.py", called_args[1])
+@patch("sys.exit")
+def test_shutdown(mock_exit, app):
+    """Verifica che shutdown chiami sys.exit()."""
+    app.shutdown()
+    mock_exit.assert_called_once()
 
-        mock_shutdown.assert_called_once()
 
-    @patch("subprocess.Popen")
-    @patch("builtins.print")
-    @patch.object(OfflineGames, "shutdown")
-    def test_boot_selected_game_exception(self, mock_shutdown, mock_print, mock_popen):
-        """Verifica la gestione errore durante l'avvio."""
-        mock_popen.side_effect = OSError("File non trovato")
-        self.app.pointer = 0
+@patch("subprocess.Popen")
+@patch.object(OfflineGames, "shutdown")
+def test_boot_selected_game_success(mock_shutdown, mock_popen, app):
+    """Verifica il corretto avvio di un gioco."""
+    app.pointer = 1
+    app.boot_selected_game()
 
-        self.app.boot_selected_game()
+    mock_popen.assert_called_once()
+    called_args = mock_popen.call_args[0][0]
+    assert "BattagliaNavale.py" in called_args[1]
+    mock_shutdown.assert_called_once()
 
-        mock_shutdown.assert_not_called()
-        mock_print.assert_called_once()
 
-    @patch("pygame.display.flip")
-    def test_rendering(self, mock_flip):
-        """Test del rendering UI."""
-        self.app.pointer = 1
-        self.app.refresh_ui()
-        mock_flip.assert_called_once()
+@patch("subprocess.Popen")
+@patch("builtins.print")
+@patch.object(OfflineGames, "shutdown")
+def test_boot_selected_game_exception(mock_shutdown, mock_print, mock_popen, app):
+    """Verifica la gestione errore durante l'avvio."""
+    mock_popen.side_effect = OSError("File non trovato")
+    app.pointer = 0
 
-    @patch("pygame.time.Clock")
-    @patch("pygame.event.get")
-    def test_start_engine_navigation_down(self, mock_event_get, mock_clock_class):
-        """Verifica la navigazione verso il basso."""
-        mock_clock_inst = MagicMock()
-        mock_clock_inst.tick.side_effect = StopIteration
-        mock_clock_class.return_value = mock_clock_inst
+    app.boot_selected_game()
 
-        mock_event_get.return_value = [
-            pygame.event.Event(pygame.KEYDOWN, key=pygame.K_DOWN)
-        ]
+    mock_shutdown.assert_not_called()
+    mock_print.assert_called_once()
 
-        with self.assertRaises(StopIteration):
-            self.app.start_engine()
 
-        self.assertEqual(self.app.pointer, 1)
+@patch("pygame.display.flip")
+def test_rendering(mock_flip, app):
+    """Test del rendering UI."""
+    app.pointer = 1
+    app.refresh_ui()
+    mock_flip.assert_called_once()
 
-    @patch("pygame.time.Clock")
-    @patch("pygame.event.get")
-    def test_start_engine_navigation_up(self, mock_event_get, mock_clock_class):
-        """Verifica la navigazione verso l'alto."""
-        mock_clock_inst = MagicMock()
-        mock_clock_inst.tick.side_effect = StopIteration
-        mock_clock_class.return_value = mock_clock_inst
 
-        self.app.pointer = 0
+# =========================
+# TEST NAVIGAZIONE
+# =========================
 
-        mock_event_get.return_value = [
-            pygame.event.Event(pygame.KEYDOWN, key=pygame.K_UP)
-        ]
 
-        with self.assertRaises(StopIteration):
-            self.app.start_engine()
+@patch("pygame.time.Clock")
+@patch("pygame.event.get")
+def test_start_engine_navigation_down(mock_event_get, mock_clock_class, app):
+    """Verifica la navigazione verso il basso."""
+    mock_clock_inst = MagicMock()
+    mock_clock_inst.tick.side_effect = StopIteration
+    mock_clock_class.return_value = mock_clock_inst
 
-        self.assertEqual(self.app.pointer, len(self.app.catalog) - 1)
+    mock_event_get.return_value = [
+        pygame.event.Event(pygame.KEYDOWN, key=pygame.K_DOWN)
+    ]
 
-    @patch("pygame.time.Clock")
-    @patch("pygame.event.get")
-    @patch.object(OfflineGames, "boot_selected_game")
-    def test_start_engine_return(self, mock_boot, mock_event_get, mock_clock_class):
-        """Verifica che INVIO avvii il gioco."""
-        mock_clock_inst = MagicMock()
-        mock_clock_inst.tick.side_effect = StopIteration
-        mock_clock_class.return_value = mock_clock_inst
+    with pytest.raises(StopIteration):
+        app.start_engine()
 
-        mock_event_get.return_value = [
-            pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)
-        ]
+    assert app.pointer == 1
 
-        with self.assertRaises(StopIteration):
-            self.app.start_engine()
 
-        mock_boot.assert_called_once()
+@patch("pygame.time.Clock")
+@patch("pygame.event.get")
+def test_start_engine_navigation_up(mock_event_get, mock_clock_class, app):
+    """Verifica la navigazione verso l'alto."""
+    mock_clock_inst = MagicMock()
+    mock_clock_inst.tick.side_effect = StopIteration
+    mock_clock_class.return_value = mock_clock_inst
 
-    @patch("pygame.time.Clock")
-    @patch("pygame.event.get")
-    @patch.object(OfflineGames, "shutdown")
-    def test_start_engine_quit(self, mock_shutdown, mock_event_get, mock_clock_class):
-        """Verifica la chiusura con ESC o QUIT."""
-        mock_clock_inst = MagicMock()
-        mock_clock_inst.tick.side_effect = StopIteration
-        mock_clock_class.return_value = mock_clock_inst
+    app.pointer = 0
+    mock_event_get.return_value = [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_UP)]
 
-        mock_event_get.return_value = [
-            pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE)
-        ]
+    with pytest.raises(StopIteration):
+        app.start_engine()
 
-        with self.assertRaises(StopIteration):
-            self.app.start_engine()
+    assert app.pointer == len(app.catalog) - 1
 
-        mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
 
-        with self.assertRaises(StopIteration):
-            self.app.start_engine()
+@patch("pygame.time.Clock")
+@patch("pygame.event.get")
+@patch.object(OfflineGames, "boot_selected_game")
+def test_start_engine_return(mock_boot, mock_event_get, mock_clock_class, app):
+    """Verifica che INVIO avvii il gioco."""
+    mock_clock_inst = MagicMock()
+    mock_clock_inst.tick.side_effect = StopIteration
+    mock_clock_class.return_value = mock_clock_inst
 
-        self.assertEqual(mock_shutdown.call_count, 2)
+    mock_event_get.return_value = [
+        pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)
+    ]
+
+    with pytest.raises(StopIteration):
+        app.start_engine()
+
+    mock_boot.assert_called_once()
+
+
+@patch("pygame.time.Clock")
+@patch("pygame.event.get")
+@patch.object(OfflineGames, "shutdown")
+def test_start_engine_quit(mock_shutdown, mock_event_get, mock_clock_class, app):
+    """Verifica la chiusura con ESC o QUIT."""
+    mock_clock_inst = MagicMock()
+    mock_clock_inst.tick.side_effect = [StopIteration, StopIteration]
+    mock_clock_class.return_value = mock_clock_inst
+
+    # Test ESCAPE
+    mock_event_get.return_value = [
+        pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE)
+    ]
+    with pytest.raises(StopIteration):
+        app.start_engine()
+
+    # Test QUIT
+    mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
+    with pytest.raises(StopIteration):
+        app.start_engine()
+
+    assert mock_shutdown.call_count == 2
