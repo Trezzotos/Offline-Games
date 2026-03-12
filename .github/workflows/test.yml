@@ -32,7 +32,7 @@ jobs:
           pip install pytest pytest-cov
 
       - name: Test with pytest
-        run: pytest --cov=. --cov-report=xml tests/
+        run: pytest --cov=. --cov-report=xml test/
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
