@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 import pygame
 import pytest
 
-from src.main_menu import OfflineGames
+from main_menu import OfflineGames
 
 # Driver grafici dummy per pygame (test headless)
 os.environ["SDL_VIDEODRIVER"] = "dummy"
