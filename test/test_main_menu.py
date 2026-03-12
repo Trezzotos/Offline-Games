@@ -57,7 +57,7 @@ def test_boot_selected_game_success(mock_shutdown, mock_popen, app):
 
     mock_popen.assert_called_once()
     called_args = mock_popen.call_args[0][0]
-    assert "BattagliaNavale.py" in called_args[1]
+    assert "battleship.py" in called_args[1]
     mock_shutdown.assert_called_once()
 
 
