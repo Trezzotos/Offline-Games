@@ -648,7 +648,9 @@ def main():
 
                     if (
                         enemy_grid_x <= mx < enemy_grid_x + num_columns * cell_dimension
-                        and enemy_grid_y <= my < enemy_grid_y + num_rows * cell_dimension
+                        and enemy_grid_y
+                        <= my
+                        < enemy_grid_y + num_rows * cell_dimension
                     ):
                         col = (mx - enemy_grid_x) // cell_dimension
                         row = (my - enemy_grid_y) // cell_dimension
@@ -677,7 +679,6 @@ def main():
                                 PLAYER_TURN = False
                                 enemy_attack_pending = True
                                 enemy_attack_start = pygame.time.get_ticks()
-
 
         placement_phase = (
             ships_placed < len(player_ships)
@@ -712,7 +713,9 @@ def main():
                     cell_y = start_y + i * cell_dimension
 
                 pygame.draw.rect(
-                    display, SHIPS_COLOR, (cell_x, cell_y, cell_dimension, cell_dimension)
+                    display,
+                    SHIPS_COLOR,
+                    (cell_x, cell_y, cell_dimension, cell_dimension),
                 )
                 pygame.draw.rect(
                     display, BLACK, (cell_x, cell_y, cell_dimension, cell_dimension), 1
@@ -729,7 +732,10 @@ def main():
                         (x + 1, y + 1, cell_dimension - 2, cell_dimension - 2),
                     )
                     pygame.draw.rect(
-                        display, BLUE_GIRD_MARGIN, (x, y, cell_dimension, cell_dimension), 1
+                        display,
+                        BLUE_GIRD_MARGIN,
+                        (x, y, cell_dimension, cell_dimension),
+                        1,
                     )
 
             if not show_instructions:
@@ -746,7 +752,6 @@ def main():
                         enemy_attack_start = pygame.time.get_ticks()
                     else:
                         enemy_attack_pending = False
-
 
             for r in range(num_rows):
                 for c in range(num_columns):
@@ -778,7 +783,10 @@ def main():
                                 display,
                                 RED,
                                 (x + margin, y + margin),
-                                (x + cell_dimension - margin, y + cell_dimension - margin),
+                                (
+                                    x + cell_dimension - margin,
+                                    y + cell_dimension - margin,
+                                ),
                                 3,
                             )
                             pygame.draw.line(
@@ -790,7 +798,9 @@ def main():
                             )
                         else:
                             radius = cell_dimension // 4
-                            pygame.draw.circle(display, WHITE, (center_x, center_y), radius, 3)
+                            pygame.draw.circle(
+                                display, WHITE, (center_x, center_y), radius, 3
+                            )
 
             for r in range(num_rows):
                 for c in range(num_columns):
@@ -820,7 +830,10 @@ def main():
                                 display,
                                 RED,
                                 (x + margin, y + margin),
-                                (x + cell_dimension - margin, y + cell_dimension - margin),
+                                (
+                                    x + cell_dimension - margin,
+                                    y + cell_dimension - margin,
+                                ),
                                 3,
                             )
                             pygame.draw.line(
@@ -832,7 +845,9 @@ def main():
                             )
                         else:
                             radius = cell_dimension // 4
-                            pygame.draw.circle(display, WHITE, (center_x, center_y), radius, 3)
+                            pygame.draw.circle(
+                                display, WHITE, (center_x, center_y), radius, 3
+                            )
 
             if PLAYER_TURN:
                 overlay = pygame.Surface(

@@ -24,7 +24,9 @@ def load_module():
     return importlib.import_module("battleship")
 
 
-def run_main(monkeypatch, module, event_frames=None, mouse_positions=None, tick_values=None):
+def run_main(
+    monkeypatch, module, event_frames=None, mouse_positions=None, tick_values=None
+):
     """Esegue main() con eventi e tempi controllati."""
     pygame.init()
 
@@ -258,14 +260,46 @@ def test_main_placement_and_attack(monkeypatch):
     enemy_y = 10
 
     frames = [
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 5))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 5))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 85, player_y + 5))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 85))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 85))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 165))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 245))],
-        [pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(enemy_x + 5, enemy_y + 5))],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 5)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 5)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 85, player_y + 5)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 85)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 85)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 165)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 245)
+            )
+        ],
+        [
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, button=1, pos=(enemy_x + 5, enemy_y + 5)
+            )
+        ],
         [pygame.event.Event(pygame.QUIT)],
     ]
 
