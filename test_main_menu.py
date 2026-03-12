@@ -1,10 +1,14 @@
-# pylint: disable=no-member, line-too-long, missing-final-newline
+# pylint: disable=line-too-long, missing-final-newline, import-error
+# pylint: disable=no-member, redefined-outer-name
+
 """Unit test per il modulo main_menu con pytest."""
 
 import os
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 import pygame
+
 from main_menu import OfflineGames
 
 # Driver grafici dummy per pygame (test headless)
@@ -134,7 +138,6 @@ def test_start_engine_return(mock_boot, mock_event_get, mock_clock_class, app):
 def test_start_engine_quit(mock_shutdown, mock_event_get, mock_clock_class, app):
     """Verifica la chiusura con ESC o QUIT."""
     mock_clock_inst = MagicMock()
-    # Usiamo una lista di effetti per gestire due chiamate separate
     mock_clock_inst.tick.side_effect = [StopIteration, StopIteration]
     mock_clock_class.return_value = mock_clock_inst
 
