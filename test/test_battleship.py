@@ -241,7 +241,10 @@ def test_main_help_overlay(monkeypatch):
     run_main(
         monkeypatch,
         module,
-        event_frames=[[help_click], [pygame.event.Event(pygame.QUIT)]],
+        event_frames=[
+            [help_click],
+            [pygame.event.Event(pygame.QUIT)],
+        ],
         mouse_positions=[(705, 450), (705, 450)],
         tick_values=[0, 100, 200, 300],
     )
@@ -260,46 +263,30 @@ def test_main_placement_and_attack(monkeypatch):
     enemy_y = 10
 
     frames = [
-        [
-            pygame.event.Event(
-                pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 5)
-            )
-        ],
-        [
-            pygame.event.Event(
-                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 5)
-            )
-        ],
-        [
-            pygame.event.Event(
-                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 85, player_y + 5)
-            )
-        ],
-        [
-            pygame.event.Event(
-                pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 85)
-            )
-        ],
-        [
-            pygame.event.Event(
-                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 85)
-            )
-        ],
-        [
-            pygame.event.Event(
-                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 165)
-            )
-        ],
-        [
-            pygame.event.Event(
-                pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 245)
-            )
-        ],
-        [
-            pygame.event.Event(
-                pygame.MOUSEBUTTONDOWN, button=1, pos=(enemy_x + 5, enemy_y + 5)
-            )
-        ],
+        [pygame.event.Event(
+            pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 5)
+        )],
+        [pygame.event.Event(
+            pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 5)
+        )],
+        [pygame.event.Event(
+            pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 85, player_y + 5)
+        )],
+        [pygame.event.Event(
+            pygame.MOUSEBUTTONDOWN, button=3, pos=(player_x + 5, player_y + 85)
+        )],
+        [pygame.event.Event(
+            pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 85)
+        )],
+        [pygame.event.Event(
+            pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 165)
+        )],
+        [pygame.event.Event(
+            pygame.MOUSEBUTTONDOWN, button=1, pos=(player_x + 5, player_y + 245)
+        )],
+        [pygame.event.Event(
+            pygame.MOUSEBUTTONDOWN, button=1, pos=(enemy_x + 5, enemy_y + 5)
+        )],
         [pygame.event.Event(pygame.QUIT)],
     ]
 
