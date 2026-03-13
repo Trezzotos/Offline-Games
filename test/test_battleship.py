@@ -15,7 +15,8 @@ import pygame
 import pytest
 
 MODULE_NAME = "battleship_attached"
-MODULE_PATH = Path(__file__).with_name("battleship.py")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+MODULE_PATH = PROJECT_ROOT / "src" / "battleship.py"
 
 
 def load_module():
