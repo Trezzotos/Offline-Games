@@ -9,7 +9,6 @@ from pathlib import Path
 import pygame
 import pytest
 
-
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 
@@ -32,7 +31,9 @@ def load_module():
     return module
 
 
-def run_main(monkeypatch, module, event_frames=None, mouse_positions=None, tick_values=None):
+def run_main(
+    monkeypatch, module, event_frames=None, mouse_positions=None, tick_values=None
+):
     """Esegue main() con eventi e tempi controllati."""
     pygame.init()
     event_frames = event_frames or [[pygame.event.Event(pygame.QUIT)]]
@@ -197,7 +198,12 @@ def test_place_ship_and_place_enemy_ships(game_module):
     game_module.reset_game()
     game_module.place_enemy_ships()
     occupied = sum(cell.contains_ship for row in game_module.enemy_grid for cell in row)
-    mapped = sum(cell.ship_id != -1 for row in game_module.enemy_grid for cell in row if cell.contains_ship)
+    mapped = sum(
+        cell.ship_id != -1
+        for row in game_module.enemy_grid
+        for cell in row
+        if cell.contains_ship
+    )
     assert occupied == 16
     assert mapped == 16
     assert game_module.enemy_ships_placed is True
@@ -210,7 +216,11 @@ def test_enemy_attack_horizontal_targeting_and_sink(game_module, monkeypatch):
     set_player_ship(game_module, [(0, 0), (0, 1), (0, 2)], ship_id=0)
 
     monkeypatch.setattr(game_module.random, "choice", lambda seq: (0, 0))
-    monkeypatch.setattr(game_module.random, "shuffle", lambda seq: seq.__setitem__(slice(None), [(0, 1), (1, 0), (0, -1), (-1, 0)]))
+    monkeypatch.setattr(
+        game_module.random,
+        "shuffle",
+        lambda seq: seq.__setitem__(slice(None), [(0, 1), (1, 0), (0, -1), (-1, 0)]),
+    )
 
     assert game_module.enemy_attack() is True
     assert game_module.player_grid[0][0].hitted is True
@@ -243,7 +253,11 @@ def test_enemy_attack_vertical_reset_target_and_game_over(game_module, monkeypat
     game_module.player_ships[1].remaining_cells = 0
 
     monkeypatch.setattr(game_module.random, "choice", lambda seq: (0, 0))
-    monkeypatch.setattr(game_module.random, "shuffle", lambda seq: seq.__setitem__(slice(None), [(1, 0), (0, 1), (0, -1), (-1, 0)]))
+    monkeypatch.setattr(
+        game_module.random,
+        "shuffle",
+        lambda seq: seq.__setitem__(slice(None), [(1, 0), (0, 1), (0, -1), (-1, 0)]),
+    )
 
     assert game_module.enemy_attack() is True
     assert game_module.enemy_attack.target_ship_id == 0
@@ -318,14 +332,22 @@ def test_main_help_overlay_open_and_close_resume(monkeypatch):
     module.enemy_attack_pending = True
     module.show_instructions = False
 
-    help_click = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=module.help_button.center)
-    close_click = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=module.close_instructions_button.center)
+    help_click = pygame.event.Event(
+        pygame.MOUSEBUTTONDOWN, button=1, pos=module.help_button.center
+    )
+    close_click = pygame.event.Event(
+        pygame.MOUSEBUTTONDOWN, button=1, pos=module.close_instructions_button.center
+    )
 
     run_main(
         monkeypatch,
         module,
         event_frames=[[help_click], [close_click], [pygame.event.Event(pygame.QUIT)]],
-        mouse_positions=[module.help_button.center, module.close_instructions_button.center, (0, 0)],
+        mouse_positions=[
+            module.help_button.center,
+            module.close_instructions_button.center,
+            (0, 0),
+        ],
         tick_values=[0, 100, 200, 300],
     )
 
@@ -342,7 +364,9 @@ def test_main_restart_button(monkeypatch):
     module.player_lives = 1
     module.ships_placed = 3
 
-    restart_click = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=module.restart_button.center)
+    restart_click = pygame.event.Event(
+        pygame.MOUSEBUTTONDOWN, button=1, pos=module.restart_button.center
+    )
 
     run_main(
         monkeypatch,
@@ -390,7 +414,9 @@ def test_main_place_ships_and_player_hit(monkeypatch):
         (0, 0),
     ]
 
-    run_main(monkeypatch, module, events, positions, [0, 100, 200, 300, 400, 500, 600, 700])
+    run_main(
+        monkeypatch, module, events, positions, [0, 100, 200, 300, 400, 500, 600, 700]
+    )
 
     assert module.ships_placed == len(module.player_ships)
     assert module.enemy_grid[0][0].hitted is True
