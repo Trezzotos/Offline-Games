@@ -438,3 +438,49 @@ def test_main_place_ships_player_miss_triggers_enemy_attack(monkeypatch):
     assert module.enemy_grid[0][0].hitted is True
     assert module.enemy_grid[0][0].sunk is False
     assert module.player_grid[0][0].hitted is True
+
+def test_main_right_click_rotates_ship(monkeypatch):
+    module = load_module()
+    module.reset_game()
+
+    right_click = pygame.event.Event(
+        pygame.MOUSEBUTTONDOWN,
+        button=3,
+        pos=(module.player_grid_x + 5, module.player_grid_y + 5),
+    )
+
+    run_main(
+        monkeypatch,
+        module,
+        event_frames=[[right_click], [pygame.event.Event(pygame.QUIT)]],
+        mouse_positions=[(module.player_grid_x + 5, module.player_grid_y + 5), (0, 0)],
+        tick_values=[0, 100],
+    )
+
+    assert module.toggle == -1
+
+def test_main_player_win(monkeypatch):
+    module = load_module()
+    module.reset_game()
+    module.ships_placed = len(module.player_ships)
+    module.enemy_ships_placed = True
+    module.enemy_lives = 1
+    module.enemy_grid[0][0].contains_ship = True
+
+    click = pygame.event.Event(
+        pygame.MOUSEBUTTONDOWN,
+        button=1,
+        pos=(module.enemy_grid_x + 5, module.enemy_grid_y + 5),
+    )
+
+    run_main(
+        monkeypatch,
+        module,
+        event_frames=[[click], [pygame.event.Event(pygame.QUIT)]],
+        mouse_positions=[(module.enemy_grid_x + 5, module.enemy_grid_y + 5), (0, 0)],
+        tick_values=[0, 100],
+    )
+
+    assert module.game_over is True
+    assert module.winner_text == "YOU WIN!"
+    assert module.enemy_lives == 0
