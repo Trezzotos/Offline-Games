@@ -2,7 +2,8 @@
 """Test coverage migliorato per il gioco Battleship."""
 
 # pylint: disable=no-member,protected-access,import-error,redefined-outer-name,line-too-long
-
+import pygame
+import pytest
 import importlib.util
 import os
 import sys
@@ -11,8 +12,7 @@ from pathlib import Path
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 
-import pygame
-import pytest
+
 
 MODULE_NAME = "battleship_attached"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
