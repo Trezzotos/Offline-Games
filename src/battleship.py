@@ -609,7 +609,7 @@ def main():
                     ):
                         show_instructions = False
                         if enemy_attack_pending:
-                            enemy_attack_start = pygame.time.get_ticks()
+                            enemy_attack_start = current_time
                     continue
 
                 if (
@@ -689,7 +689,7 @@ def main():
                     enemy_attack_start = current_time
                 else:
                     enemy_attack_pending = False
-                    
+
         placement_phase = (
             ships_placed < len(player_ships)
             and current_ship is not None
