@@ -1,4 +1,5 @@
 """Test coverage migliorato per il gioco Battleship."""
+
 # pylint: disable=missing-function-docstring
 # pylint: disable=no-member,protected-access,import-error,redefined-outer-name,line-too-long
 import importlib.util
@@ -465,6 +466,7 @@ def test_main_place_ships_player_miss_triggers_enemy_attack(monkeypatch):
     assert module.enemy_grid[0][0].sunk is False
     assert module.player_grid[0][0].hitted is True
 
+
 def test_main_right_click_rotates_ship(monkeypatch):
     module = load_module()
     module.reset_game()
@@ -484,6 +486,7 @@ def test_main_right_click_rotates_ship(monkeypatch):
     )
 
     assert module.toggle == -1
+
 
 def test_main_player_win(monkeypatch):
     module = load_module()
