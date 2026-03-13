@@ -32,4 +32,4 @@ jobs:
           pip install pytest pytest-cov
 
       - name: Test with pytest
-        run: pytest --cov src tests/./coverage.xml
+        run: pytest --cov src test/
