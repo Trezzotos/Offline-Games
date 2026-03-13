@@ -1,5 +1,5 @@
 """Test coverage migliorato per il gioco Battleship."""
-
+# pylint: disable=missing-function-docstring
 # pylint: disable=no-member,protected-access,import-error,redefined-outer-name,line-too-long
 import importlib.util
 import os
