@@ -1,6 +1,7 @@
 # Dipendenze del Gioco
 pygame
 numpy
+pytest
 
 # Strumenti di Sviluppo (Pipeline)
 pylint

@@ -40,8 +40,8 @@ class OfflineGames:
 
         # catalogo giochi
         self.catalog: List[Dict[str, str]] = [
-            {"label": "SUDOKU", "file": "sudoku/sudoku.py"},
-            {"label": "BATTAGLIA NAVALE", "file": "battaglia_navale/battleship.py"},
+            {"label": "SUDOKU", "file": "sudoku.py"},
+            {"label": "BATTAGLIA NAVALE", "file": "battleship.py"},
         ]
 
         # directory del progetto
