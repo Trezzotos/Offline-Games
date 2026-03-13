@@ -572,6 +572,7 @@ def main():
     running = True
 
     while running:
+        current_time = pygame.time.get_ticks()
         display.fill(BACKGROUND_COLOR)
 
         if not enemy_ships_placed:
@@ -678,8 +679,17 @@ def main():
                             else:
                                 PLAYER_TURN = False
                                 enemy_attack_pending = True
-                                enemy_attack_start = pygame.time.get_ticks()
+                                enemy_attack_start = current_time
 
+        if enemy_attack_pending and not game_over and not show_instructions:
+            if current_time - enemy_attack_start >= ATTACK_DELAY:
+                enemy_attack()
+
+                if not PLAYER_TURN and not game_over:
+                    enemy_attack_start = current_time
+                else:
+                    enemy_attack_pending = False
+                    
         placement_phase = (
             ships_placed < len(player_ships)
             and current_ship is not None
