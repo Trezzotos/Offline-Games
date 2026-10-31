@@ -1,0 +1,9 @@
+# Dipendenze di sviluppo (lint, type check, test)
+-r requirements.txt
+pytest
+pytest-cov
+pylint
+flake8
+mypy
+black
+isort

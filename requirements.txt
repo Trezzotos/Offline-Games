@@ -1,11 +1,3 @@
-# Dipendenze del Gioco
+# Dipendenze runtime del gioco
 pygame
 numpy
-pytest
-
-# Strumenti di Sviluppo (Pipeline)
-pylint
-flake8
-mypy
-black
-isort
