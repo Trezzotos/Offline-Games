@@ -1,63 +1,63 @@
 # Quality Development - Offline Games 🕹️
-Questo repository è stato creato per fornire un template Python dedicato allo **sviluppo di giochi offline**, includendo <ins>pipeline di automazione e istruzioni</ins> per i test con pytest.
+This repository was created to provide a Python template dedicated to **offline game development**, including <ins>automation pipelines and instructions</ins> for testing with pytest.
 
 ## How to start (one-time step)
-Per **scaricare** il progetto e configurare il tuo ambiente locale, esegui questi comandi:
+To **download** the project and set up your local environment, run these commands:
 
 ```Plaintext
-git clone git@github.com:USERNAME/nome-repo.git
-cd nome-repo
+git clone git@github.com:USERNAME/repo-name.git
+cd repo-name
 git pull origin main
 ```
-**Setup del virtualenv**:
+**Virtualenv setup**:
 ```Plaintext
 python -m venv .venv
-source .venv/bin/activate    # su Linux/macOS
-.venv\Scripts\activate       # su Windows
-pip install -r requirements.txt        # solo dipendenze runtime
-pip install -r requirements_dev.txt    # runtime + strumenti di sviluppo (lint, test)
+source .venv/bin/activate    # on Linux/macOS
+.venv\Scripts\activate       # on Windows
+pip install -r requirements.txt        # runtime dependencies only
+pip install -r requirements_dev.txt    # runtime + development tools (lint, test)
 ```
-Avvio: `python src/main_menu.py` (oppure direttamente `src/sudoku.py` / `src/battleship.py`).
+Launch: `python src/main_menu.py` (or directly `src/sudoku.py` / `src/battleship.py`).
 
-## Architettura
-Ogni gioco è un pacchetto con responsabilità separate (SRP) e dipendenze iniettabili (DIP):
+## Architecture
+Each game is a package with separated responsibilities (SRP) and injectable dependencies (DIP):
 
 ```
 src/
-├── main_menu.py, sudoku.py, battleship.py   # entry point sottili
+├── main_menu.py, sudoku.py, battleship.py   # thin entry points
 ├── common/launcher.py                       # GameLauncher (Protocol) + SubprocessLauncher
 ├── menu/        catalog.py · view.py · app.py
 ├── sudoku_game/ config · engine · state · renderer · app
 └── battleship_game/
-    ├── config.py      costanti e layout
-    ├── model.py       Cell, Ship, Board, Orientation (dominio puro)
+    ├── config.py      constants and layout
+    ├── model.py       Cell, Ship, Board, Orientation (pure domain)
     ├── placement.py   FleetPlacer (Protocol) + RandomFleetPlacer
     ├── ai.py          ShootingStrategy (Protocol) + HuntTargetStrategy
-    ├── game.py        BattleshipGame: regole, turni, fasi (nessun Pygame)
-    ├── board_view.py  rendering di una plancia
-    ├── screens.py     schermate e overlay
-    └── app.py         controller: eventi, timer del nemico, loop
+    ├── game.py        BattleshipGame: rules, turns, phases (no Pygame)
+    ├── board_view.py  rendering of a single board
+    ├── screens.py     screens and overlays
+    └── app.py         controller: events, enemy timer, loop
 ```
-La logica di gioco non dipende da Pygame, quindi è testabile senza finestra; non ci sono variabili globali.
+Game logic does not depend on Pygame, so it is testable without a window; there are no global variables.
 
 ## Pipeline & Repository Structure
-Per far sì che le automazioni funzionino correttamente, abbiamo mantenuto la struttura del template originale. Le **pipeline** si occupano di **verificare la qualità del codice** ad ogni modifica.
+To ensure the automations work correctly, we kept the structure of the original template. The **pipelines** take care of **verifying code quality** on every change.
 
-**Directory Structure**: Assicurati di non spostare la cartella .github/.
+**Directory Structure**: Make sure not to move the .github/ folder.
 
-**Workflow**: Le definizioni delle pipeline si trovano in:
+**Workflow**: The pipeline definitions are located in:
 
 ```
 .github/workflows
 ```
 ## How to make a commit
-Quando lavori al tuo gioco, effettua dei <ins>commit frequenti e descrittivi</ins>. Usa i **Conventional Commits** come in questi esempi:
+When working on your game, make <ins>frequent and descriptive commits</ins>. Use **Conventional Commits** as in these examples:
 
 ```
 git add src/game_logic.py
 git commit -m 'feat(sudoku): add grid generation logic'
 ```
-Altri esempi di messaggi approvati:
+Other examples of approved messages:
 ```
 fix(battleship): prevent ships from overlapping
 
@@ -66,38 +66,36 @@ docs(readme): update installation guide
 test(logic): add unit tests for score calculation
 ```
 ## Software Testing & Coverage
-La qualità è fondamentale. Usiamo **pytest** per assicurarci che tutto funzioni e per monitorare **quanto codice è coperto dai test**.
+Quality is essential. We use **pytest** to make sure everything works and to monitor **how much code is covered by tests**.
 
-Per far girare i test e vedere il report:
+To run the tests and see the report:
 
 ```
 pytest --cov --cov-report=term-missing
 ```
-La CI esegue i test (`test.yml`) e fallisce se la coverage scende sotto la soglia definita in `pyproject.toml` (`fail_under`, oggi 90%).
+The CI runs the tests (`test.yml`) and fails if coverage drops below the threshold defined in `pyproject.toml` (`fail_under`, currently 90%).
 
-Controlli di qualità eseguiti in CI (`lint.yml`): `pylint`, `flake8`, `mypy` (con `disallow_untyped_defs`), `black`, `isort`.
+Quality checks executed in CI (`lint.yml`): `pylint`, `flake8`, `mypy` (with `disallow_untyped_defs`), `black`, `isort`.
 
-⚠️ Il progetto mantiene una code coverage minima del 90%.
+⚠️ The project maintains a minimum code coverage of 90%.
 
-# Il Progetto: Offline Games
+# The Project: Offline Games
 ## Main Menu
-![Screenshot del Main Menu](docs/images/MainMenu.png)
+![Main Menu Screenshot](docs/images/MainMenu.png)
 
 ## Sudoku
-![Screenshot del Sodoku](docs/images/Sudoku.png)
+![Sudoku Screenshot](docs/images/Sudoku.png)
 
-## Battaglia Navale
-![Screenshot della Battaglia Navale](docs/images/Battleship.png)
+## Battleship
+![Battleship Screenshot](docs/images/Battleship.png)
 
-Il software è una raccolta di **giochi classici** sviluppati puramente in **Python**, pensati per essere giocati **senza connessione internet**.
+The software is a collection of **classic games** developed purely in **Python**, designed to be played **without an internet connection**.
 
-**Sudoku**: Una sfida logica con generazione dinamica delle griglie.
+**Sudoku**: A logical challenge with dynamic grid generation.
 
-**Battaglia Navale**: Il classico gioco di strategia riprodotto in digitale.
+**Battleship**: The classic strategy game reproduced in digital form.
 
-Per offrire un'esperienza utente superiore e un'interfaccia grafica accattivante, il progetto utilizza:
+To offer a superior user experience and an appealing graphical interface, the project uses:
 ```
-Libreria Grafica di riferimento:  [pygame] 
+Reference graphics library:  [pygame] 
 ```
-
-
