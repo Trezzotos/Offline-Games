@@ -110,9 +110,7 @@ class Renderer:
         self.screen.blit(label, (20, y))
 
     def _draw_difficulty(self, state: GameState, y: int) -> None:
-        label = self.f_small.render(
-            f"MODE: {state.difficulty_label}", True, MODE_GRAY
-        )
+        label = self.f_small.render(f"MODE: {state.difficulty_label}", True, MODE_GRAY)
         self.screen.blit(label, (WIDTH - label.get_width() - 20, y))
 
     def _draw_note_status(self, state: GameState, y: int) -> None:

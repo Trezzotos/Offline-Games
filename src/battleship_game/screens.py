@@ -135,9 +135,7 @@ class ScreenRenderer:
             label = config.TURN_AI_TEXT
             color = config.TURN_AI_COLOR
         text = self.fonts.button.render(label, True, color)
-        self.surface.blit(
-            text, text.get_rect(midleft=(20, config.STATUS_BAR_Y))
-        )
+        self.surface.blit(text, text.get_rect(midleft=(20, config.STATUS_BAR_Y)))
 
     # --- Overlay ---------------------------------------------------------------
     def _draw_help_button(self) -> None:
