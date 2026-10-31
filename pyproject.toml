@@ -3,3 +3,26 @@ pythonpath = ["src"]
 addopts = ["--import-mode=importlib"]
 testpaths = ["test"]
 
+[tool.coverage.run]
+source = ["src"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+
+[tool.pylint.main]
+init-hook = "import sys; sys.path.insert(0, 'src')"
+extension-pkg-allow-list = ["pygame"]
+
+[tool.pylint.design]
+# Strategy/Protocol e view con un unico metodo pubblico sono scelte di design volute.
+min-public-methods = 1
+
+[tool.pylint.format]
+max-line-length = 100
