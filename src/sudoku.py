@@ -1,5 +1,7 @@
 """Punto di ingresso del Sudoku."""
 
+from __future__ import annotations
+
 from sudoku_game.app import SudokuGame
 
 

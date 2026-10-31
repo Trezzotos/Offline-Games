@@ -1,5 +1,7 @@
 """Modello di dominio di Battleship: celle, navi e plance (nessuna dipendenza UI)."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
 

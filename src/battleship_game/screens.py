@@ -1,5 +1,7 @@
 """Schermate di Battleship: piazzamento, battaglia e overlay."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 import pygame
@@ -52,10 +54,12 @@ class ScreenRenderer:
         self.surface.fill(config.BACKGROUND_COLOR)
         if game.phase is Phase.PLACEMENT:
             self._draw_placement(game, mouse_pos, show_instructions)
+            self._draw_esc_hint()
             return
         self._draw_battle(game)
         if not game.is_game_over:
             self._draw_help_button()
+            self._draw_esc_hint()
         if show_instructions and not game.is_game_over:
             self._draw_instructions_overlay()
         if game.is_game_over:
@@ -97,14 +101,43 @@ class ScreenRenderer:
 
     # --- Battaglia -----------------------------------------------------------
     def _draw_battle(self, game: BattleshipGame) -> None:
-        mid = config.HEIGHT // 2
-        pygame.draw.line(self.surface, config.BLACK, (0, mid), (config.WIDTH, mid), 3)
+        pygame.draw.line(
+            self.surface,
+            config.BLACK,
+            (0, config.DIVIDER_Y),
+            (config.WIDTH, config.DIVIDER_Y),
+            3,
+        )
         self.player_view.draw(self.surface, game.player_board, reveal_ships=True)
         self.enemy_view.draw(self.surface, game.enemy_board, reveal_ships=False)
         if game.player_turn:
             self.player_view.draw_dim_overlay(self.surface, game.player_board)
         else:
             self.enemy_view.draw_dim_overlay(self.surface, game.enemy_board)
+        if not game.is_game_over:
+            self._draw_turn_indicator(game)
+
+    def _draw_esc_hint(self) -> None:
+        """Mostra il suggerimento ESC in fondo allo schermo."""
+        hint = self.fonts.small.render(
+            config.ESC_HINT_TEXT, True, config.ESC_HINT_COLOR
+        )
+        self.surface.blit(
+            hint, hint.get_rect(center=(config.WIDTH // 2, config.ESC_HINT_Y))
+        )
+
+    def _draw_turn_indicator(self, game: BattleshipGame) -> None:
+        """Mostra lo stato del turno tra le due griglie."""
+        if game.player_turn:
+            label = config.TURN_YOUR_TEXT
+            color = config.TURN_YOUR_COLOR
+        else:
+            label = config.TURN_AI_TEXT
+            color = config.TURN_AI_COLOR
+        text = self.fonts.button.render(label, True, color)
+        self.surface.blit(
+            text, text.get_rect(midleft=(20, config.STATUS_BAR_Y))
+        )
 
     # --- Overlay ---------------------------------------------------------------
     def _draw_help_button(self) -> None:
@@ -118,22 +151,26 @@ class ScreenRenderer:
         shade.fill((0, 0, 0, 170))
         self.surface.blit(shade, (0, 0))
 
-        panel = pygame.Rect(0, 0, 580, 470)
+        panel = pygame.Rect(0, 0, 420, 300)
         panel.center = (config.WIDTH // 2, config.HEIGHT // 2)
         pygame.draw.rect(self.surface, config.DARK_PANEL, panel, border_radius=16)
         pygame.draw.rect(self.surface, config.WHITE, panel, 2, border_radius=16)
-        self._draw_close_button()
+        self._draw_close_button(panel)
         self._center_text(
-            "Instructions", self.fonts.big, (config.WIDTH // 2, panel.top + 45)
+            "Instructions", self.fonts.big, (config.WIDTH // 2, panel.top + 35)
         )
-        line_y = panel.top + 95
+        line_y = panel.top + 70
         for line in config.INSTRUCTION_LINES:
+            if line == "":
+                line_y += 8
+                continue
             text = self.fonts.small.render(line, True, (240, 240, 240))
-            self.surface.blit(text, (panel.left + 28, line_y))
-            line_y += 26
+            self.surface.blit(text, (panel.left + 24, line_y))
+            line_y += 22
 
-    def _draw_close_button(self) -> None:
-        button = config.CLOSE_INSTRUCTIONS_BUTTON
+    def _draw_close_button(self, panel: pygame.Rect) -> None:
+        button = pygame.Rect(panel.right - 44, panel.top + 8, 36, 36)
+        config.CLOSE_INSTRUCTIONS_BUTTON.update(button)
         pygame.draw.rect(self.surface, config.BUTTON_RED, button, border_radius=8)
         pygame.draw.rect(self.surface, config.WHITE, button, 2, border_radius=8)
         margin = 10
@@ -154,7 +191,7 @@ class ScreenRenderer:
         button = config.RESTART_BUTTON
         pygame.draw.rect(self.surface, config.BUTTON_GREEN, button)
         pygame.draw.rect(self.surface, config.BLACK, button, 2)
-        self._center_text("Ricomincia", self.fonts.button, button.center)
+        self._center_text("Restart", self.fonts.button, button.center)
 
     def _center_text(
         self, text: str, font: pygame.font.Font, center: tuple[float, float]

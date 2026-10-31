@@ -1,5 +1,7 @@
 """Punto di ingresso di Battleship."""
 
+from __future__ import annotations
+
 from battleship_game.app import BattleshipApp
 
 

@@ -1,5 +1,7 @@
 """Rendering grafico del Sudoku."""
 
+from __future__ import annotations
+
 import pygame
 
 from sudoku_game.config import CELL_SIZE, GRID_SIZE, HEIGHT, THEME, WIDTH
@@ -32,6 +34,12 @@ class Renderer:
                     self.screen, THEME["panel"], rect.inflate(40, 20), border_radius=10
                 )
             self.screen.blit(txt, rect)
+        hint = self.f_small.render(
+            "UP/DOWN to select - ENTER to confirm - ESC for Main Menu",
+            True,
+            MODE_GRAY,
+        )
+        self.screen.blit(hint, hint.get_rect(center=(WIDTH // 2, HEIGHT - 35)))
 
     def draw_game(self, state: GameState) -> None:
         """Renderizza l'intera schermata di gioco."""
@@ -93,30 +101,40 @@ class Renderer:
         self._draw_note_status(state, footer_y + 45)
         if state.finished:
             self._draw_end_message(state)
+        else:
+            self._draw_esc_hint()
 
     def _draw_lives(self, state: GameState, y: int) -> None:
         color = THEME["error"] if state.lives == 1 else THEME["text"]
-        label = self.f_small.render(f"VITE: {'I ' * state.lives}", True, color)
+        label = self.f_small.render(f"LIVES: {'I ' * state.lives}", True, color)
         self.screen.blit(label, (20, y))
 
     def _draw_difficulty(self, state: GameState, y: int) -> None:
         label = self.f_small.render(
-            f"MODALITÀ: {state.difficulty_label}", True, MODE_GRAY
+            f"MODE: {state.difficulty_label}", True, MODE_GRAY
         )
         self.screen.blit(label, (WIDTH - label.get_width() - 20, y))
 
     def _draw_note_status(self, state: GameState, y: int) -> None:
         status_color = THEME["note"] if state.note_mode else NOTE_GRAY
-        label = self.f_small.render("[A] ANNOTAZIONE:", True, THEME["text"])
+        label = self.f_small.render("[A] NOTES: ", True, THEME["text"])
         status = self.f_small.render(
-            "ATTIVA" if state.note_mode else "DISATTIVATA", True, status_color
+            "ON" if state.note_mode else "OFF", True, status_color
         )
         start_x = (WIDTH - (label.get_width() + status.get_width())) // 2
         self.screen.blit(label, (start_x, y))
         self.screen.blit(status, (start_x + label.get_width(), y))
 
+    def _draw_esc_hint(self) -> None:
+        hint = self.f_small.render(
+            "Arrow keys to move - ESC for Main Menu",
+            True,
+            MODE_GRAY,
+        )
+        self.screen.blit(hint, hint.get_rect(center=(WIDTH // 2, HEIGHT - 35)))
+
     def _draw_end_message(self, state: GameState) -> None:
-        message = "VITTORIA!" if state.won else "GAME OVER!"
+        message = "YOU WIN!" if state.won else "GAME OVER!"
         color = THEME["win"] if state.won else THEME["error"]
-        img = self.f_small.render(f"{message} ESC per Menu", True, color)
+        img = self.f_small.render(f"{message} ESC for Menu", True, color)
         self.screen.blit(img, img.get_rect(center=(WIDTH // 2, HEIGHT - 35)))

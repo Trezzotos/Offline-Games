@@ -1,5 +1,7 @@
 """Stato e regole di una partita di Sudoku (nessuna dipendenza UI)."""
 
+from __future__ import annotations
+
 import numpy as np
 
 from sudoku_game.config import GRID_SIZE, INITIAL_LIVES

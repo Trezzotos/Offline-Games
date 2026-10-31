@@ -1,12 +1,14 @@
 """Rendering di una singola plancia e conversione pixel <-> coordinate."""
 
+from __future__ import annotations
+
 import pygame
 
 from battleship_game import config
 from battleship_game.config import Coord
 from battleship_game.model import Board
 
-MARKER_MARGIN = 8
+MARKER_MARGIN = 6
 
 
 class BoardView:

@@ -1,5 +1,7 @@
 """Punto di ingresso del menu principale."""
 
+from __future__ import annotations
+
 from menu.app import OfflineGames
 
 

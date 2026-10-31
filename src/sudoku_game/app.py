@@ -1,5 +1,7 @@
 """Controller del Sudoku: eventi, modalità (menu/gioco) e ciclo principale."""
 
+from __future__ import annotations
+
 import sys
 from enum import Enum
 

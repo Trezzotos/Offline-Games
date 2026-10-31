@@ -1,5 +1,7 @@
 """Strategie di piazzamento della flotta."""
 
+from __future__ import annotations
+
 import random
 from typing import Protocol
 

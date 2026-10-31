@@ -1,13 +1,20 @@
 """Motore logico del Sudoku: generazione e risoluzione (nessuna dipendenza UI)."""
 
+from __future__ import annotations
+
 import random
+from typing import TYPE_CHECKING
 
 import numpy as np
-import numpy.typing as npt
 
 from sudoku_game.config import BOX_SIZE, DEFAULT_REMOVED_CELLS, DIFFICULTIES, GRID_SIZE
 
-Board = npt.NDArray[np.int8]
+if TYPE_CHECKING:
+    import numpy.typing as npt
+
+    Board = npt.NDArray[np.int8]
+else:  # a runtime serve solo il nome: nessuna dipendenza da numpy.typing
+    Board = np.ndarray
 
 
 class SudokuEngine:

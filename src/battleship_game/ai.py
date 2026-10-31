@@ -1,5 +1,7 @@
 """Intelligenza artificiale dell'avversario (strategia hunt & target)."""
 
+from __future__ import annotations
+
 import random
 from typing import Protocol
 

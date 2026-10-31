@@ -1,5 +1,7 @@
 """Costanti di configurazione del Sudoku."""
 
+from __future__ import annotations
+
 WIDTH = 600
 HEIGHT = 780
 GRID_SIZE = 9
@@ -7,7 +9,7 @@ BOX_SIZE = 3
 CELL_SIZE = WIDTH // GRID_SIZE
 INITIAL_LIVES = 3
 
-DIFFICULTIES: dict[str, int] = {"FACILE": 30, "MEDIO": 45, "DIFFICILE": 60}
+DIFFICULTIES: dict[str, int] = {"EASY": 30, "MEDIUM": 45, "HARD": 60}
 DEFAULT_REMOVED_CELLS = 45
 
 Color = tuple[int, int, int]

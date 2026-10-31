@@ -23,9 +23,9 @@ def fixture_game(launcher: MagicMock) -> SudokuGame:
 
 def test_setup_game(game: SudokuGame) -> None:
     """Avviare una partita crea lo stato e passa a PLAYING."""
-    game.setup_game("MEDIO")
+    game.setup_game("MEDIUM")
     assert game.mode is Mode.PLAYING
-    assert game.state is not None and game.state.difficulty_label == "MEDIO"
+    assert game.state is not None and game.state.difficulty_label == "MEDIUM"
     assert game.state.grid.shape == (9, 9)
 
 
@@ -45,7 +45,7 @@ def test_menu_navigation_and_start(game: SudokuGame) -> None:
 
 def test_play_keys(game: SudokuGame) -> None:
     """Tasti di gioco: note, movimento, numeri e cancellazione."""
-    game.setup_game("FACILE")
+    game.setup_game("EASY")
     state = game.state
     assert state is not None
     game.handle_key(pygame.K_a)
@@ -68,7 +68,7 @@ def test_play_keys(game: SudokuGame) -> None:
 
 def test_play_keys_ignored_when_game_over(game: SudokuGame) -> None:
     """A partita persa i tasti di gioco sono ignorati."""
-    game.setup_game("FACILE")
+    game.setup_game("EASY")
     assert game.state is not None
     game.state.game_over = True
     game.handle_key(pygame.K_a)
@@ -79,7 +79,7 @@ def test_escape_returns_to_menu_then_launches_main_menu(
     game: SudokuGame, launcher: MagicMock
 ) -> None:
     """ESC in partita torna al menu; ESC nel menu riavvia il menu principale."""
-    game.setup_game("FACILE")
+    game.setup_game("EASY")
     game.handle_key(pygame.K_ESCAPE)
     assert game.mode is Mode.MENU
     with patch("sys.exit") as mock_exit:
@@ -91,7 +91,7 @@ def test_escape_returns_to_menu_then_launches_main_menu(
 def test_draw_all_modes(game: SudokuGame) -> None:
     """Disegno di menu, partita, note, vittoria e sconfitta."""
     game.draw()
-    game.setup_game("FACILE")
+    game.setup_game("EASY")
     state = game.state
     assert state is not None
     state.notes[0][0] = {1, 5, 9}

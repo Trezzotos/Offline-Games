@@ -1,5 +1,7 @@
 """Controller di Battleship: input, temporizzazione dei turni e ciclo principale."""
 
+from __future__ import annotations
+
 import pygame
 
 from battleship_game import config
@@ -47,6 +49,8 @@ class BattleshipApp:
     def handle_event(self, event: pygame.event.Event, now: int) -> None:
         """Smista un singolo evento Pygame."""
         if event.type == pygame.QUIT:
+            self.running = False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             self._handle_click(event.button, event.pos, now)

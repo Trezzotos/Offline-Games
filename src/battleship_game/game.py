@@ -1,5 +1,7 @@
 """Regole e stato di una partita di Battleship (logica pura, senza Pygame)."""
 
+from __future__ import annotations
+
 import random
 from enum import Enum
 

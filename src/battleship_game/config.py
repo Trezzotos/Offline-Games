@@ -1,5 +1,7 @@
 """Costanti e parametri di configurazione di Battleship."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 import pygame
@@ -23,15 +25,31 @@ ENEMY_ATTACK_DELAY_MS = 1000
 FPS = 60
 
 # --- Geometria ---------------------------------------------------------------
-WIDTH = 800
-HEIGHT = WIDTH + 100
-CELL_SIZE = 40
-ENEMY_GRID_ORIGIN: Coord = (WIDTH // 4, 10)
-PLAYER_GRID_ORIGIN: Coord = (WIDTH // 4, HEIGHT // 2 + 40)
+WIDTH = 550
+HEIGHT = 600
+CELL_SIZE = 24
+_GRID_W = GRID_COLUMNS * CELL_SIZE
+_GRID_X = (WIDTH - _GRID_W) // 2
 
-RESTART_BUTTON = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 20, 200, 60)
-HELP_BUTTON = pygame.Rect(WIDTH - 160, HEIGHT // 2 - 30, 130, 60)
-CLOSE_INSTRUCTIONS_BUTTON = pygame.Rect(WIDTH - 60, 20, 40, 40)
+ENEMY_GRID_ORIGIN: Coord = (_GRID_X, 20)
+PLAYER_GRID_ORIGIN: Coord = (_GRID_X, 335)
+
+STATUS_BAR_Y = 275
+DIVIDER_Y = 300
+
+RESTART_BUTTON = pygame.Rect(WIDTH // 2 - 80, HEIGHT // 2 + 20, 160, 50)
+HELP_BUTTON = pygame.Rect(WIDTH - 120, STATUS_BAR_Y - 18, 100, 36)
+CLOSE_INSTRUCTIONS_BUTTON = pygame.Rect(WIDTH - 55, 15, 36, 36)
+
+# --- Testi di turno ----------------------------------------------------------
+TURN_YOUR_TEXT = "Your turn"
+TURN_AI_TEXT = "Waiting for AI..."
+TURN_YOUR_COLOR: Color = (0, 230, 100)
+TURN_AI_COLOR: Color = (255, 200, 50)
+
+ESC_HINT_TEXT = "ESC for Main Menu"
+ESC_HINT_COLOR: Color = (120, 120, 130)
+ESC_HINT_Y = HEIGHT - 12
 
 # --- Colori ------------------------------------------------------------------
 BACKGROUND_COLOR: Color = (0, 20, 50)
@@ -52,20 +70,16 @@ BUTTON_RED: Color = (170, 40, 40)
 BUTTON_GREEN: Color = (0, 180, 0)
 
 INSTRUCTION_LINES: tuple[str, ...] = (
-    "SHIP PLACEMENT",
-    "- Left click: place the ship.",
-    "- Right click: rotate the ship.",
-    "- Green = valid position.",
-    "- Red = invalid position.",
+    "PLACEMENT",
+    "  Left click: place  |  Right click: rotate",
+    "  Green = valid  |  Red = invalid",
     "",
     "ATTACK",
-    "- Click on the enemy grid to shoot.",
-    "- Red X = hit.",
-    "- White circle = miss.",
+    "  Click the enemy grid to shoot",
+    "  Red X = hit  |  White circle = miss",
     "",
-    "PAUSE / HELP",
-    "- Press Help to pause the game.",
-    "- Press the X in the top-right corner to resume.",
+    "OTHER",
+    "  Help = pause  |  ESC = back to menu",
 )
 
 
@@ -73,8 +87,8 @@ INSTRUCTION_LINES: tuple[str, ...] = (
 class FontSpec:
     """Dimensioni dei font usati dall'interfaccia."""
 
-    ship: int = 30
-    title: int = 80
-    big: int = 60
-    button: int = 40
-    small: int = 26
+    ship: int = 26
+    title: int = 48
+    big: int = 40
+    button: int = 28
+    small: int = 20

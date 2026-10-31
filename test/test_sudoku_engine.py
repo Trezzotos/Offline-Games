@@ -58,7 +58,7 @@ def test_solve_fails_on_unsolvable_board(engine: SudokuEngine) -> None:
 
 @pytest.mark.parametrize(
     ("difficulty", "removed"),
-    [("FACILE", 30), ("MEDIO", 45), ("DIFFICILE", 60), ("???", 45)],
+    [("EASY", 30), ("MEDIUM", 45), ("HARD", 60), ("???", 45)],
 )
 def test_generate_puzzle_removes_cells(
     engine: SudokuEngine, difficulty: str, removed: int

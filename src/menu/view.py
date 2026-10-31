@@ -1,5 +1,7 @@
 """Rendering del menu principale."""
 
+from __future__ import annotations
+
 import pygame
 
 from menu.catalog import GameEntry
@@ -36,7 +38,7 @@ class MenuView:
         for idx, entry in enumerate(catalog):
             self._draw_entry(entry.label, idx, idx == pointer)
         hint = self.font_help.render(
-            "Naviga con ↑↓ • Conferma con INVIO", True, THEME["footer"]
+            "UP/DOWN to select - ENTER to confirm", True, THEME["footer"]
         )
         self.window.blit(hint, hint.get_rect(center=(CENTER_X, 620)))
         pygame.display.flip()

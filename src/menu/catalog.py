@@ -1,5 +1,7 @@
 """Catalogo dei giochi disponibili nel menu."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 
@@ -13,5 +15,5 @@ class GameEntry:
 
 DEFAULT_CATALOG: tuple[GameEntry, ...] = (
     GameEntry("SUDOKU", "sudoku.py"),
-    GameEntry("BATTAGLIA NAVALE", "battleship.py"),
+    GameEntry("BATTLESHIP", "battleship.py"),
 )

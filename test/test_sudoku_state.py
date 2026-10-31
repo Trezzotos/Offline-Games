@@ -10,9 +10,9 @@ from sudoku_game.state import GameState
 @pytest.fixture(name="state")
 def fixture_state() -> GameState:
     """Stato con una cella (0, 0) libera."""
-    solution, grid = SudokuEngine().generate_puzzle("FACILE")
+    solution, grid = SudokuEngine().generate_puzzle("EASY")
     grid[0, 0] = 0
-    return GameState(solution, grid, "FACILE")
+    return GameState(solution, grid, "EASY")
 
 
 def wrong_value(state: GameState) -> int:
@@ -25,7 +25,7 @@ def test_initial_state(state: GameState) -> None:
     assert state.lives == 3
     assert state.selected == [4, 4]
     assert not state.finished and not state.note_mode
-    assert state.difficulty_label == "FACILE"
+    assert state.difficulty_label == "EASY"
 
 
 def test_move_selection_wraps(state: GameState) -> None:
@@ -66,7 +66,8 @@ def test_notes_toggle_and_clear_on_input(state: GameState) -> None:
 
 def test_fixed_cells_and_same_value_are_ignored(state: GameState) -> None:
     """Le celle fisse e i valori identici non cambiano nulla."""
-    state.selected = [0, 1]
+    fixed_row, fixed_col = (int(i) for i in np.argwhere(state.is_fixed)[0])
+    state.selected = [fixed_row, fixed_col]
     before = state.grid.copy()
     state.input_number(wrong_value(state))
     state.erase_selected()
